@@ -3,7 +3,6 @@ package pl.edu.wat.bookthevisit.entities;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Data
 @Entity(name = "Doctor")
