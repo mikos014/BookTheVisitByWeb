@@ -7,4 +7,5 @@ public interface UserService
 {
     boolean logUser(UserDto userDto);
     boolean registerUser(UserRegistrationDto userRegistrationDto);
+    boolean editData(UserDto userDto, UserRegistrationDto userChangeDataDto);
 }

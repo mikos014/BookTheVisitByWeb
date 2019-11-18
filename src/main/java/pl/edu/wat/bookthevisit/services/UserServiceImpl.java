@@ -46,4 +46,15 @@ public class UserServiceImpl implements UserService
         else
             return false;
     }
+
+    @Override
+    public boolean editData(UserDto userDto, UserRegistrationDto userChangeDataDto)
+    {
+        if (!userDto.getEmail().equals(userChangeDataDto.getEmail())
+                && usersRepository.findByEmail(userChangeDataDto.getEmail()) == null)
+        {
+            usersRepository.
+        }
+        return false;
+    }
 }

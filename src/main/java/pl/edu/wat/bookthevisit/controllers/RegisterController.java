@@ -22,7 +22,8 @@ public class RegisterController
     @PostMapping("/register")
     public ResponseEntity registerUser(@RequestBody UserRegistrationDto userRegistrationDto)
     {
-        if (userService.registerUser(userRegistrationDto)) {
+        if (userService.registerUser(userRegistrationDto))
+        {
             return new ResponseEntity(HttpStatus.NO_CONTENT);
             //przejdz do strony głownej
         }

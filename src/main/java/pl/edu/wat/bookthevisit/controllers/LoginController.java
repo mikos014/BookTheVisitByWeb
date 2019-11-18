@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import pl.edu.wat.bookthevisit.dtos.UserDto;
 import pl.edu.wat.bookthevisit.services.UserService;
 
-import java.util.List;
 
 @RestController
 //@CrossOrigin

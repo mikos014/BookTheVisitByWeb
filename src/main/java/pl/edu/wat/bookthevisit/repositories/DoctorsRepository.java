@@ -1,8 +1,14 @@
 package pl.edu.wat.bookthevisit.repositories;
 
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Component;
 import pl.edu.wat.bookthevisit.entities.DoctorEntity;
 
-public interface DoctorsRepository
+import java.util.List;
+
+@Component
+public interface DoctorsRepository extends CrudRepository<DoctorEntity, Integer>
 {
-    DoctorEntity findBySpec(String spec);
+    List<DoctorEntity> findAll();
+    List<DoctorEntity> findBySpec(String spec);
 }

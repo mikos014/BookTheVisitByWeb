@@ -22,15 +22,21 @@ public class FindDoctorController
         this.doctorService = doctorService;
     }
 
+    @GetMapping("/doctors/")
+    public ResponseEntity<List<DoctorDto>> getDoctors()
+    {
+        return new ResponseEntity<>(doctorService.getDoctors(), HttpStatus.OK);
+    }
+
     @GetMapping("/doctors/{spec}")
     public ResponseEntity<List<DoctorDto>> getDoctorsBySpec(@PathVariable("spec") String spec)
     {
-        List<DoctorDto> doctorDto = doctorService.getDoctorsBySpec(spec);
+        List<DoctorDto> doctorDtoList = doctorService.getDoctorsBySpec(spec);
 
-        if (doctorDto == null)
+        if (doctorDtoList == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         else
-            return new ResponseEntity<>(doctorDto, HttpStatus.OK);
+            return new ResponseEntity<>(doctorDtoList, HttpStatus.OK);
     }
 
 }
