@@ -10,7 +10,7 @@ public class UserEntity
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer IdPacient;
+    private Integer idPacient;
 
     private String email;
     private String name;

@@ -10,7 +10,7 @@ public class DoctorEntity
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer IdDoctor;
+    private Integer idDoctor;
 
     private String name;
     private String spec;

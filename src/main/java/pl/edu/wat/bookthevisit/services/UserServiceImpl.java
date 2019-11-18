@@ -34,13 +34,13 @@ public class UserServiceImpl implements UserService
         if (usersRepository.findByEmail(userRegistrationDto.getEmail()) == null)
         {
             UserEntity userEntity = new UserEntity();
+
             userEntity.setEmail(userRegistrationDto.getEmail());
             userEntity.setName(userRegistrationDto.getName());
             userEntity.setPassword(userRegistrationDto.getPassword());
             userEntity.setSurname(userRegistrationDto.getSurname());
 
             usersRepository.save(userEntity);
-
             return true;
         }
         else
@@ -50,11 +50,41 @@ public class UserServiceImpl implements UserService
     @Override
     public boolean editData(UserDto userDto, UserRegistrationDto userChangeDataDto)
     {
-        if (!userDto.getEmail().equals(userChangeDataDto.getEmail())
+        int i = 0;
+        UserEntity userEntityToCreate = new UserEntity();
+
+        if (userChangeDataDto.getEmail() != null && !userDto.getEmail().equals(userChangeDataDto.getEmail())
                 && usersRepository.findByEmail(userChangeDataDto.getEmail()) == null)
         {
-            usersRepository.
+            userEntityToCreate.setEmail(userChangeDataDto.getEmail());
+            i++;
         }
-        return false;
+        if (userChangeDataDto.getName() != null)
+        {
+            userEntityToCreate.setName(userChangeDataDto.getName());
+            i++;
+        }
+        if (userChangeDataDto.getPassword() != null)
+        {
+            userEntityToCreate.setPassword(userChangeDataDto.getPassword());
+            i++;
+        }
+        if (userChangeDataDto.getSurname() != null)
+        {
+            userEntityToCreate.setSurname(userChangeDataDto.getSurname());
+            i++;
+        }
+
+        if (i > 0)
+        {
+            UserEntity userEntityToDelete = usersRepository.findByEmail(userDto.getEmail());
+            usersRepository.delete(userEntityToDelete);
+            usersRepository.save(userEntityToCreate);
+            return true;
+        }
+        else
+            return false;
     }
+
+
 }

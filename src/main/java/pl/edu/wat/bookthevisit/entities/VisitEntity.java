@@ -11,15 +11,15 @@ public class VisitEntity
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer IdVisit;
+    private Integer idVisit;
     private Date date;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "IdDoctor")
+    @JoinColumn(name = "idDoctor")
     private DoctorEntity doctor;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "IdPacient")
+    @JoinColumn(name = "idPacient")
     private UserEntity pacient;
 
 }
