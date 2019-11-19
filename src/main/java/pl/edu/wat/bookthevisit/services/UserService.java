@@ -1,11 +1,11 @@
 package pl.edu.wat.bookthevisit.services;
 
-import pl.edu.wat.bookthevisit.dtos.UserDto;
+import pl.edu.wat.bookthevisit.dtos.UserLoginDto;
 import pl.edu.wat.bookthevisit.dtos.UserRegistrationDto;
 
 public interface UserService
 {
-    boolean logUser(UserDto userDto);
+    boolean logUser(UserLoginDto userLoginDto);
     boolean registerUser(UserRegistrationDto userRegistrationDto);
-    boolean editData(UserDto userDto, UserRegistrationDto userChangeDataDto);
+    boolean editData(UserLoginDto userLoginDto, UserRegistrationDto userChangeDataDto);
 }

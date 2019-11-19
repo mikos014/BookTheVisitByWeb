@@ -2,7 +2,7 @@ package pl.edu.wat.bookthevisit.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.edu.wat.bookthevisit.dtos.UserDto;
+import pl.edu.wat.bookthevisit.dtos.UserLoginDto;
 import pl.edu.wat.bookthevisit.dtos.UserRegistrationDto;
 import pl.edu.wat.bookthevisit.entities.UserEntity;
 import pl.edu.wat.bookthevisit.repositories.UsersRepository;
@@ -20,18 +20,16 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public boolean logUser(UserDto userDto)
+    public boolean logUser(UserLoginDto userLoginDto)
     {
-        if (usersRepository.findByEmailAndPassword(userDto.getEmail(), userDto.getPassword()) != null)
-            return true;
-        else
-            return false;
+        return usersRepository.existsByEmailAndPassword(userLoginDto.getEmail(), userLoginDto.getPassword());
     }
 
     @Override
-    public boolean registerUser(UserRegistrationDto userRegistrationDto) {
+    public boolean registerUser(UserRegistrationDto userRegistrationDto)
+    {
 
-        if (usersRepository.findByEmail(userRegistrationDto.getEmail()) == null)
+        if (!usersRepository.existsByEmail(userRegistrationDto.getEmail()))
         {
             UserEntity userEntity = new UserEntity();
 
@@ -48,36 +46,32 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public boolean editData(UserDto userDto, UserRegistrationDto userChangeDataDto)
+    public boolean editData(UserLoginDto userLoginDto, UserRegistrationDto userChangeDataDto)
     {
         int i = 0;
         UserEntity userEntityToCreate = new UserEntity();
 
-        if (userChangeDataDto.getEmail() != null && !userDto.getEmail().equals(userChangeDataDto.getEmail())
-                && usersRepository.findByEmail(userChangeDataDto.getEmail()) == null)
+        if (userChangeDataDto.getEmail() != null && !usersRepository.existsByEmail(userChangeDataDto.getEmail())
+                && userChangeDataDto.getPassword() != null)
         {
-            userEntityToCreate.setEmail(userChangeDataDto.getEmail());
+            userEntityToCreate = new UserEntity(null, userChangeDataDto.getEmail(), usersRepository.findByEmail(userLoginDto.getEmail()).getName(), userChangeDataDto.getPassword(), usersRepository.findByEmail(userLoginDto.getEmail()).getSurname());
             i++;
         }
-        if (userChangeDataDto.getName() != null)
+        else if (userChangeDataDto.getEmail() != null && !usersRepository.existsByEmail(userChangeDataDto.getEmail()))
         {
-            userEntityToCreate.setName(userChangeDataDto.getName());
+            userEntityToCreate = new UserEntity(null, userChangeDataDto.getEmail(), usersRepository.findByEmail(userLoginDto.getEmail()).getName(), userLoginDto.getPassword(), usersRepository.findByEmail(userLoginDto.getEmail()).getSurname());
             i++;
         }
-        if (userChangeDataDto.getPassword() != null)
+        else if (userChangeDataDto.getPassword() != null)
         {
-            userEntityToCreate.setPassword(userChangeDataDto.getPassword());
-            i++;
-        }
-        if (userChangeDataDto.getSurname() != null)
-        {
-            userEntityToCreate.setSurname(userChangeDataDto.getSurname());
+            userEntityToCreate = new UserEntity(null, userLoginDto.getEmail(), usersRepository.findByEmail(userLoginDto.getEmail()).getName(), userChangeDataDto.getPassword(), usersRepository.findByEmail(userLoginDto.getEmail()).getSurname());
             i++;
         }
 
+
         if (i > 0)
         {
-            UserEntity userEntityToDelete = usersRepository.findByEmail(userDto.getEmail());
+            UserEntity userEntityToDelete = usersRepository.findByEmail(userLoginDto.getEmail());
             usersRepository.delete(userEntityToDelete);
             usersRepository.save(userEntityToCreate);
             return true;
@@ -85,6 +79,5 @@ public class UserServiceImpl implements UserService
         else
             return false;
     }
-
 
 }

@@ -22,7 +22,7 @@ public class FindDoctorController
         this.doctorService = doctorService;
     }
 
-    @GetMapping("/doctors/")
+    @GetMapping("/doctors")
     public ResponseEntity<List<DoctorDto>> getDoctors()
     {
         return new ResponseEntity<>(doctorService.getDoctors(), HttpStatus.OK);

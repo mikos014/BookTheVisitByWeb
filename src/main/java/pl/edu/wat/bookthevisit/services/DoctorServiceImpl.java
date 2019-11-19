@@ -24,7 +24,7 @@ public class DoctorServiceImpl implements DoctorService
     {
         List<DoctorDto> doctorDtoList = new ArrayList<>();
 
-        doctorsRepository.findAll().forEach(d -> doctorDtoList.add(new DoctorDto(d.getName(), d.getSpec(), d.getSurname())));
+        doctorsRepository.findAll().forEach(d -> doctorDtoList.add(new DoctorDto(d.getIdDoctor(), d.getName(), d.getSpec(), d.getSurname())));
 
         return doctorDtoList;
     }
@@ -34,7 +34,7 @@ public class DoctorServiceImpl implements DoctorService
     {
         List<DoctorDto> doctorDtoList = new ArrayList<>();
 
-        doctorsRepository.findBySpec(spec).forEach(d -> doctorDtoList.add(new DoctorDto(d.getName(), d.getSpec(), d.getSurname())));
+        doctorsRepository.findBySpec(spec).forEach(d -> doctorDtoList.add(new DoctorDto(d.getIdDoctor(), d.getName(), d.getSpec(), d.getSurname())));
 
         return doctorDtoList;
     }

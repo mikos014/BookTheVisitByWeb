@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.wat.bookthevisit.dtos.UserDto;
+import pl.edu.wat.bookthevisit.dtos.UserLoginDto;
 import pl.edu.wat.bookthevisit.services.UserService;
 
 
@@ -23,9 +24,9 @@ public class LoginController
 
 
     @PostMapping("/login")
-    public ResponseEntity logUser(@RequestBody UserDto userDto)
+    public ResponseEntity logUser(@RequestBody UserLoginDto userLoginDto)
     {
-        if (userService.logUser(userDto)) {
+        if (userService.logUser(userLoginDto)) {
             return new ResponseEntity(HttpStatus.NO_CONTENT);
             //przełącz na strone głowną
         }

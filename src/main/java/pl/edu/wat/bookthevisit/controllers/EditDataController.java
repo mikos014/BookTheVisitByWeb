@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import pl.edu.wat.bookthevisit.dtos.UserDto;
+import pl.edu.wat.bookthevisit.dtos.UserLoginDto;
 import pl.edu.wat.bookthevisit.dtos.UserRegistrationDto;
 import pl.edu.wat.bookthevisit.services.UserService;
 
@@ -22,9 +22,9 @@ public class EditDataController
     }
 
     @PostMapping("/editData")
-    public ResponseEntity editData(@RequestBody UserDto userDto, @RequestBody UserRegistrationDto userChangeDataDto)
+    public ResponseEntity editData(@RequestBody UserLoginDto userLoginDto, @RequestBody UserRegistrationDto userChangeDataDto)
     {
-        if(userService.editData(userDto, userChangeDataDto))
+        if(userService.editData(userLoginDto, userChangeDataDto))
         {
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         }

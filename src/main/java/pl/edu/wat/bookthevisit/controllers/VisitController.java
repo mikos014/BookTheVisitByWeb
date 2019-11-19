@@ -4,8 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.edu.wat.bookthevisit.dtos.DoctorDto;
+import pl.edu.wat.bookthevisit.dtos.UserDto;
 import pl.edu.wat.bookthevisit.dtos.VisitDto;
 import pl.edu.wat.bookthevisit.services.VisitService;
+
+import java.util.List;
 
 @RestController
 public class VisitController
@@ -19,9 +23,9 @@ public class VisitController
     }
 
     @PostMapping("/addVisit")
-    public ResponseEntity addVisit(@RequestBody VisitDto visitDto)
+    public ResponseEntity addVisit(@RequestBody VisitDto visitDto, DoctorDto doctorDto, UserDto userDto)
     {
-        if (visitService.addVisit(visitDto))
+        if (visitService.addVisit(visitDto, doctorDto, userDto))
         {
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         }
@@ -30,15 +34,21 @@ public class VisitController
     }
 
     @GetMapping("/showVisit")
-    public ResponseEntity showAllVisits()
+    public ResponseEntity<List<VisitDto>> showAllVisits()
     {
-        visitService.showAllVisits();
-        return new ResponseEntity(HttpStatus.OK);
+        List<VisitDto> visitDtoList = visitService.showAllVisits();
+
+        if (visitDtoList != null)
+        {
+            return new ResponseEntity<>(visitDtoList, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/deleteVisit/{id}")
     public ResponseEntity deleteVisit(@PathVariable ("id") Integer id)
     {
-        //return new ResponseEntity(HttpStatus.NO_CONTENT);
+        visitService.deleteVisitById(id);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }

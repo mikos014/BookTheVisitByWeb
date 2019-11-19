@@ -7,6 +7,7 @@ import pl.edu.wat.bookthevisit.entities.UserEntity;
 @Component
 public interface UsersRepository extends CrudRepository<UserEntity, Integer>
 {
-    UserEntity findByEmailAndPassword(String email, String password);
     UserEntity findByEmail(String email);
+    boolean existsByEmailAndPassword(String email, String password);
+    boolean existsByEmail(String email);
 }
