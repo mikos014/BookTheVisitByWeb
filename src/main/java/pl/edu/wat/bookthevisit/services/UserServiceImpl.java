@@ -1,11 +1,16 @@
 package pl.edu.wat.bookthevisit.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.edu.wat.bookthevisit.EmailExistsException;
 import pl.edu.wat.bookthevisit.dtos.UserLoginDto;
 import pl.edu.wat.bookthevisit.dtos.UserRegistrationDto;
 import pl.edu.wat.bookthevisit.entities.UserEntity;
 import pl.edu.wat.bookthevisit.repositories.UsersRepository;
+
+import javax.security.auth.login.LoginException;
 
 
 @Service
@@ -13,71 +18,58 @@ public class UserServiceImpl implements UserService
 {
     private final UsersRepository usersRepository;
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Autowired
-    public UserServiceImpl(UsersRepository usersRepository)
-    {
+    public UserServiceImpl(UsersRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.usersRepository = usersRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
-    public boolean logUser(UserLoginDto userLoginDto)
+    public void logUser(UserLoginDto userLoginDto) throws LoginException
     {
-        return usersRepository.existsByEmailAndPassword(userLoginDto.getEmail(), userLoginDto.getPassword());
+        if (!usersRepository.existsByEmailAndPassword(userLoginDto.getEmail(), bCryptPasswordEncoder.encode(userLoginDto.getPassword())))
+            throw new LoginException("Bad e-mail or password");
     }
 
     @Override
-    public boolean registerUser(UserRegistrationDto userRegistrationDto)
+    public void registerUser(UserRegistrationDto userRegistrationDto) throws EmailExistsException
     {
 
-        if (!usersRepository.existsByEmail(userRegistrationDto.getEmail()))
-        {
-            UserEntity userEntity = new UserEntity();
+        if(usersRepository.existsByEmail(userRegistrationDto.getEmail()))
+            throw new EmailExistsException("E-mail " + userRegistrationDto.getEmail() + " already in use");
 
-            userEntity.setEmail(userRegistrationDto.getEmail());
-            userEntity.setName(userRegistrationDto.getName());
-            userEntity.setPassword(userRegistrationDto.getPassword());
-            userEntity.setSurname(userRegistrationDto.getSurname());
 
-            usersRepository.save(userEntity);
-            return true;
-        }
-        else
-            return false;
+        UserEntity userEntity = new UserEntity();
+
+        userEntity.setEmail(userRegistrationDto.getEmail());
+        userEntity.setName(userRegistrationDto.getName());
+        userEntity.setPassword(bCryptPasswordEncoder.encode(userRegistrationDto.getPassword()));
+        userEntity.setSurname(userRegistrationDto.getSurname());
+
+        usersRepository.save(userEntity);
+
     }
 
     @Override
-    public boolean editData(UserLoginDto userLoginDto, UserRegistrationDto userChangeDataDto)
-    {
-        int i = 0;
-        UserEntity userEntityToCreate = new UserEntity();
+    public void editData(UserRegistrationDto userChangeDataDto) throws EmailExistsException {
 
-        if (userChangeDataDto.getEmail() != null && !usersRepository.existsByEmail(userChangeDataDto.getEmail())
-                && userChangeDataDto.getPassword() != null)
-        {
-            userEntityToCreate = new UserEntity(null, userChangeDataDto.getEmail(), usersRepository.findByEmail(userLoginDto.getEmail()).getName(), userChangeDataDto.getPassword(), usersRepository.findByEmail(userLoginDto.getEmail()).getSurname());
-            i++;
-        }
-        else if (userChangeDataDto.getEmail() != null && !usersRepository.existsByEmail(userChangeDataDto.getEmail()))
-        {
-            userEntityToCreate = new UserEntity(null, userChangeDataDto.getEmail(), usersRepository.findByEmail(userLoginDto.getEmail()).getName(), userLoginDto.getPassword(), usersRepository.findByEmail(userLoginDto.getEmail()).getSurname());
-            i++;
-        }
-        else if (userChangeDataDto.getPassword() != null)
-        {
-            userEntityToCreate = new UserEntity(null, userLoginDto.getEmail(), usersRepository.findByEmail(userLoginDto.getEmail()).getName(), userChangeDataDto.getPassword(), usersRepository.findByEmail(userLoginDto.getEmail()).getSurname());
-            i++;
-        }
+        Object currentUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String currentUserEmail = currentUser.toString();
+        String currentUserPassword = usersRepository.findByEmail(currentUserEmail).getPassword();
 
+//        if(currentUser instanceof UserDetails)
+//        {
+//            currentUserEmail = ((UserDetails)currentUser).getUsername();
+//        }
 
-        if (i > 0)
-        {
-            UserEntity userEntityToDelete = usersRepository.findByEmail(userLoginDto.getEmail());
-            usersRepository.delete(userEntityToDelete);
-            usersRepository.save(userEntityToCreate);
-            return true;
-        }
-        else
-            return false;
+        if(!usersRepository.existsByEmail(userChangeDataDto.getEmail()))
+            throw new EmailExistsException(userChangeDataDto.getEmail());
+
+        String newUserEmail = userChangeDataDto.getEmail() == null ? currentUserEmail : userChangeDataDto.getEmail();
+        String newUserPassword = userChangeDataDto.getPassword() == null ? currentUserPassword : userChangeDataDto.getPassword();
+        usersRepository.saveUpdate(currentUserEmail, newUserEmail, newUserPassword);
     }
 
 }
