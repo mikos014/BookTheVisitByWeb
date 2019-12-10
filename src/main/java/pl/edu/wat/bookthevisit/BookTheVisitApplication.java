@@ -9,10 +9,10 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 public class BookTheVisitApplication extends SpringBootServletInitializer
 {
 
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-        return builder.sources(BookTheVisitApplication.class);
-    }
+//    @Override
+//    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+//        return builder.sources(BookTheVisitApplication.class);
+//    }
 
     public static void main(String[] args) {
         SpringApplication.run(BookTheVisitApplication.class, args);

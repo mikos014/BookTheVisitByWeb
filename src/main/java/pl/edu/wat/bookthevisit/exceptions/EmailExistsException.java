@@ -1,4 +1,4 @@
-package pl.edu.wat.bookthevisit;
+package pl.edu.wat.bookthevisit.exceptions;
 
 public class EmailExistsException extends Throwable
 {

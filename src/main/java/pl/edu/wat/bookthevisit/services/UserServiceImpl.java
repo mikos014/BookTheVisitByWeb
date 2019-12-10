@@ -1,20 +1,24 @@
 package pl.edu.wat.bookthevisit.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import pl.edu.wat.bookthevisit.EmailExistsException;
-import pl.edu.wat.bookthevisit.dtos.UserLoginDto;
+import pl.edu.wat.bookthevisit.exceptions.EmailExistsException;
 import pl.edu.wat.bookthevisit.dtos.UserRegistrationDto;
 import pl.edu.wat.bookthevisit.entities.UserEntity;
 import pl.edu.wat.bookthevisit.repositories.UsersRepository;
 
-import javax.security.auth.login.LoginException;
+import java.util.Arrays;
+import java.util.List;
 
 
-@Service
-public class UserServiceImpl implements UserService
+@Service("UserService")
+public class UserServiceImpl implements UserDetailsService, UserService
 {
     private final UsersRepository usersRepository;
 
@@ -26,12 +30,12 @@ public class UserServiceImpl implements UserService
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    @Override
-    public void logUser(UserLoginDto userLoginDto) throws LoginException
-    {
-        if (!usersRepository.existsByEmailAndPassword(userLoginDto.getEmail(), bCryptPasswordEncoder.encode(userLoginDto.getPassword())))
-            throw new LoginException("Bad e-mail or password");
-    }
+//    @Override
+//    public void logUser(UserLoginDto userLoginDto) throws LoginException
+//    {
+//        if (!usersRepository.existsByEmailAndPassword(userLoginDto.getEmail(), bCryptPasswordEncoder.encode(userLoginDto.getPassword())))
+//            throw new LoginException("Bad e-mail or password");
+//    }
 
     @Override
     public void registerUser(UserRegistrationDto userRegistrationDto) throws EmailExistsException
@@ -72,4 +76,21 @@ public class UserServiceImpl implements UserService
         usersRepository.saveUpdate(currentUserEmail, newUserEmail, newUserPassword);
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+
+        UserDetails user = (UserDetails) usersRepository.findByEmail(s);
+        if(user == null){
+            throw new UsernameNotFoundException("Invalid username or password.");
+        }
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), getAuthority());
+    }
+
+    private List<SimpleGrantedAuthority> getAuthority() {
+        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+//    public List getUsers() {
+//        return usersRepository.getUserDetails();
+//    }
 }

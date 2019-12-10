@@ -12,6 +12,7 @@ import pl.edu.wat.bookthevisit.services.VisitService;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 public class VisitController
 {
     private final VisitService visitService;

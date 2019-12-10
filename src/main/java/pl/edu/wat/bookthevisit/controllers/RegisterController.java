@@ -3,13 +3,16 @@ package pl.edu.wat.bookthevisit.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import pl.edu.wat.bookthevisit.exceptions.EmailExistsException;
 import pl.edu.wat.bookthevisit.dtos.UserRegistrationDto;
 import pl.edu.wat.bookthevisit.services.UserService;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 public class RegisterController
 {
     private final UserService userService;
@@ -20,14 +23,19 @@ public class RegisterController
     }
 
     @PostMapping("/register")
-    public ResponseEntity registerUser(@RequestBody UserRegistrationDto userRegistrationDto)
-    {
-        if (userService.registerUser(userRegistrationDto))
-        {
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
-            //przejdz do strony głownej
-        }
+    public ResponseEntity registerUser(@RequestBody UserRegistrationDto userRegistrationDto) throws EmailExistsException {
 
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        userService.registerUser(userRegistrationDto);
+
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+
+//        if (userService.registerUser(userRegistrationDto))
+//        {
+//            return new ResponseEntity(HttpStatus.NO_CONTENT);
+//            //przejdz do strony głownej
+//        }
+//
+//        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+
     }
 }
