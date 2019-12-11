@@ -17,7 +17,7 @@ public class JwtToken
                 .setIssuer(issuer)
                 .setIssuedAt(new Date(currentTimeMillis))
                 .setExpiration(new Date(currentTimeMillis + 600000))   //10 minutes
-                .signWith(SignatureAlgorithm.HS256, sign)
+                .signWith(SignatureAlgorithm.HS512, sign)
                 .compact();
     }
 

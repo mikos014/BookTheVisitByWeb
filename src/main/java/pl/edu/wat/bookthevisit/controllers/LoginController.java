@@ -22,7 +22,7 @@ import java.util.HashMap;
 
 
 @RestController
-//@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200")
 public class LoginController
 {
     private final UserService userService;

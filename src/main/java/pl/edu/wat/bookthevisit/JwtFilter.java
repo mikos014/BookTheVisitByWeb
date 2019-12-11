@@ -12,7 +12,7 @@ import java.io.IOException;
 public class JwtFilter implements Filter
 {
 //    @Value("${security.oauth2.client.clientSecret}")
-    private final String secretKey = "qwerty";
+    private String secretKey = "customLogin";
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException
@@ -26,7 +26,7 @@ public class JwtFilter implements Filter
         } else {
             try {
                 String token = header.substring(7);
-                Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+                Claims claims = Jwts.parser().setSigningKey("1234").parseClaimsJws(token).getBody();
                 servletRequest.setAttribute("claims", claims);
             } catch (final SignatureException e) {
                 throw new ServletException("Invalid token");
