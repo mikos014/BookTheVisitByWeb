@@ -1,5 +1,6 @@
 package pl.edu.wat.bookthevisit.services;
 
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -8,16 +9,19 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.edu.wat.bookthevisit.dtos.UserLoginDto;
 import pl.edu.wat.bookthevisit.exceptions.EmailExistsException;
 import pl.edu.wat.bookthevisit.dtos.UserRegistrationDto;
 import pl.edu.wat.bookthevisit.entities.UserEntity;
+import pl.edu.wat.bookthevisit.exceptions.LengthPasswordException;
 import pl.edu.wat.bookthevisit.repositories.UsersRepository;
 
+import javax.security.auth.login.LoginException;
 import java.util.Arrays;
 import java.util.List;
 
 
-@Service("UserService")
+@Service
 public class UserServiceImpl implements UserDetailsService, UserService
 {
     private final UsersRepository usersRepository;
@@ -30,12 +34,14 @@ public class UserServiceImpl implements UserDetailsService, UserService
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-//    @Override
-//    public void logUser(UserLoginDto userLoginDto) throws LoginException
-//    {
-//        if (!usersRepository.existsByEmailAndPassword(userLoginDto.getEmail(), bCryptPasswordEncoder.encode(userLoginDto.getPassword())))
-//            throw new LoginException("Bad e-mail or password");
-//    }
+    @Override
+    public void logUser(UserLoginDto userLoginDto) throws LoginException, LengthPasswordException {
+        if (!usersRepository.existsByEmailAndPassword(userLoginDto.getEmail(), userLoginDto.getPassword()))
+            throw new LoginException("Bad e-mail or password");
+
+        if(userLoginDto.getPassword().length() < 4)
+            throw new LengthPasswordException("Password too short");
+    }
 
     @Override
     public void registerUser(UserRegistrationDto userRegistrationDto) throws EmailExistsException

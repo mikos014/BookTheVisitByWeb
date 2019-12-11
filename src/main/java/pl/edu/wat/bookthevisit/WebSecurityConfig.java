@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth
 import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -13,19 +14,25 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.annotation.Resource;
 
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableOAuth2Sso
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 {
 
-    @Resource
-    private UserDetailsService userDetailsService;
+//    @Resource
+//    private UserDetailsService userDetailsService;
+//
+//    @Autowired
+//    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.userDetailsService(userDetailsService)
+//                .passwordEncoder(bCryptPasswordEncoder());
+//    }
 
 
     @Bean
@@ -34,42 +41,36 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
         return new BCryptPasswordEncoder();
     }
 
-    @Autowired
-    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService)
-                .passwordEncoder(bCryptPasswordEncoder());
-    }
 
-    @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
+//    @Override
+//    @Bean
+//    public AuthenticationManager authenticationManagerBean() throws Exception {
+//        return super.authenticationManagerBean();
+//    }
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception
     {
 //        httpSecurity
-//                .authorizeRequests()
-//                .and()
+//                .csrf().disable()
 //                .formLogin()
-//                .loginPage("/login").permitAll()
+//                .loginPage("/login").permitAll();
+//                .and()
+//                .authorizeRequests()
+//                .antMatchers("/", "/register", "/loginGoogle")
+//                .permitAll()
+//                .anyRequest()
+//                .authenticated()
 //                .and()
 //                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"));
 
-//        httpSecurity
-//                .antMatcher("/**")
-//                .authorizeRequests()
-//                    .antMatchers("/", "/login**", "/register**", "/webjars/**", "/error**")
-//                    .permitAll()
-//                .anyRequest()
-//                    .authenticated();
         httpSecurity
                 .csrf().disable()
-                .anonymous().disable()
                 .authorizeRequests()
-                .antMatchers("/api-docs/**")
-                .permitAll();
+                    .antMatchers(HttpMethod.POST,"/login")
+                    .permitAll()
+                .anyRequest()
+                    .authenticated();
     }
 
 //    @Bean

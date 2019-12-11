@@ -24,13 +24,13 @@ public class FindDoctorController
         this.doctorService = doctorService;
     }
 
-    @GetMapping("/doctors")
+    @GetMapping("/api/doctors")
     public ResponseEntity<List<DoctorDto>> getDoctors()
     {
         return new ResponseEntity<>(doctorService.getDoctors(), HttpStatus.OK);
     }
 
-    @GetMapping("/doctors/{spec}")
+    @GetMapping("/api/doctors/{spec}")
     public ResponseEntity<List<DoctorDto>> getDoctorsBySpec(@PathVariable("spec") String spec)
     {
         List<DoctorDto> doctorDtoList = doctorService.getDoctorsBySpec(spec);

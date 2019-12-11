@@ -23,7 +23,7 @@ public class EditDataController
         this.userService = userService;
     }
 
-    @PostMapping("/editData")
+    @PostMapping("/api/editData")
     public ResponseEntity editData(@RequestBody UserRegistrationDto userChangeDataDto) throws EmailExistsException
     {
         userService.editData(userChangeDataDto);
