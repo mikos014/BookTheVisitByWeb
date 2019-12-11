@@ -33,7 +33,7 @@ public class LoginController
         this.userService = userService;
     }
 
-    @PostMapping("/abc")
+    @PostMapping("/api/abc")
     public ResponseEntity<String> abc()
     {
         return new ResponseEntity<>("index", HttpStatus.OK);
@@ -49,7 +49,9 @@ public class LoginController
         catch (LoginException e)
         {
             return new ResponseEntity<>("", HttpStatus.FORBIDDEN);
-        } catch (LengthPasswordException e) {
+        }
+        catch (LengthPasswordException e)
+        {
             return new ResponseEntity<>("Password too short", HttpStatus.CONFLICT);
         }
 

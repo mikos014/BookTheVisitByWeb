@@ -44,18 +44,19 @@ public class UserServiceImpl implements UserDetailsService, UserService
     }
 
     @Override
-    public void registerUser(UserRegistrationDto userRegistrationDto) throws EmailExistsException
-    {
+    public void registerUser(UserRegistrationDto userRegistrationDto) throws EmailExistsException, LengthPasswordException {
 
         if(usersRepository.existsByEmail(userRegistrationDto.getEmail()))
             throw new EmailExistsException("E-mail " + userRegistrationDto.getEmail() + " already in use");
 
+        if(userRegistrationDto.getPassword().length() < 4)
+            throw new LengthPasswordException("Password too short");
 
         UserEntity userEntity = new UserEntity();
 
         userEntity.setEmail(userRegistrationDto.getEmail());
         userEntity.setName(userRegistrationDto.getName());
-        userEntity.setPassword(bCryptPasswordEncoder.encode(userRegistrationDto.getPassword()));
+        userEntity.setPassword(userRegistrationDto.getPassword());
         userEntity.setSurname(userRegistrationDto.getSurname());
 
         usersRepository.save(userEntity);
@@ -63,8 +64,9 @@ public class UserServiceImpl implements UserDetailsService, UserService
     }
 
     @Override
-    public void editData(UserRegistrationDto userChangeDataDto) throws EmailExistsException {
+    public void editData(UserRegistrationDto userChangeDataDto) throws EmailExistsException, LengthPasswordException {
 
+//        if()
         Object currentUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String currentUserEmail = currentUser.toString();
         String currentUserPassword = usersRepository.findByEmail(currentUserEmail).getPassword();
@@ -76,6 +78,9 @@ public class UserServiceImpl implements UserDetailsService, UserService
 
         if(!usersRepository.existsByEmail(userChangeDataDto.getEmail()))
             throw new EmailExistsException(userChangeDataDto.getEmail());
+
+        if(userChangeDataDto.getPassword().length() < 4)
+            throw new LengthPasswordException("Password too short");
 
         String newUserEmail = userChangeDataDto.getEmail() == null ? currentUserEmail : userChangeDataDto.getEmail();
         String newUserPassword = userChangeDataDto.getPassword() == null ? currentUserPassword : userChangeDataDto.getPassword();

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import pl.edu.wat.bookthevisit.exceptions.EmailExistsException;
 import pl.edu.wat.bookthevisit.dtos.UserRegistrationDto;
+import pl.edu.wat.bookthevisit.exceptions.LengthPasswordException;
 import pl.edu.wat.bookthevisit.services.UserService;
 
 @RestController
@@ -23,19 +24,22 @@ public class RegisterController
     }
 
     @PostMapping("/register")
-    public ResponseEntity registerUser(@RequestBody UserRegistrationDto userRegistrationDto) throws EmailExistsException {
-
-        userService.registerUser(userRegistrationDto);
+    public ResponseEntity registerUser(@RequestBody UserRegistrationDto userRegistrationDto)
+    {
+        try
+        {
+            userService.registerUser(userRegistrationDto);
+        }
+        catch (EmailExistsException e)
+        {
+            return new ResponseEntity<>("Email exists ! Set unique one.", HttpStatus.FORBIDDEN);
+        }
+        catch (LengthPasswordException e)
+        {
+            return new ResponseEntity<>("Password too short.", HttpStatus.CONFLICT);
+        }
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
-
-//        if (userService.registerUser(userRegistrationDto))
-//        {
-//            return new ResponseEntity(HttpStatus.NO_CONTENT);
-//            //przejdz do strony głownej
-//        }
-//
-//        return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
     }
 }
