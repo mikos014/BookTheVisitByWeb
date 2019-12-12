@@ -12,6 +12,7 @@ import pl.edu.wat.bookthevisit.services.VisitService;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 public class VisitController
 {
     private final VisitService visitService;
@@ -22,33 +23,33 @@ public class VisitController
         this.visitService = visitService;
     }
 
-    @PostMapping("/addVisit")
+    @PostMapping("/api/addVisit")
     public ResponseEntity addVisit(@RequestBody VisitDto visitDto, DoctorDto doctorDto, UserDto userDto)
     {
         if (visitService.addVisit(visitDto, doctorDto, userDto))
         {
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
+            return new ResponseEntity(HttpStatus.OK);
         }
 
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/showVisit")
+    @GetMapping("/api/showVisit")
     public ResponseEntity<List<VisitDto>> showAllVisits()
     {
         List<VisitDto> visitDtoList = visitService.showAllVisits();
 
         if (visitDtoList != null)
         {
-            return new ResponseEntity<>(visitDtoList, HttpStatus.OK);
+            return new ResponseEntity<>(visitDtoList, HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/deleteVisit/{id}")
+    @DeleteMapping("/api/deleteVisit/{id}")
     public ResponseEntity deleteVisit(@PathVariable ("id") Integer id)
     {
         visitService.deleteVisitById(id);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

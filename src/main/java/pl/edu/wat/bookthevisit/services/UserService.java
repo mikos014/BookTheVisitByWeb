@@ -1,11 +1,15 @@
 package pl.edu.wat.bookthevisit.services;
 
+import pl.edu.wat.bookthevisit.exceptions.EmailExistsException;
 import pl.edu.wat.bookthevisit.dtos.UserLoginDto;
 import pl.edu.wat.bookthevisit.dtos.UserRegistrationDto;
+import pl.edu.wat.bookthevisit.exceptions.LengthPasswordException;
+
+import javax.security.auth.login.LoginException;
 
 public interface UserService
 {
-    boolean logUser(UserLoginDto userLoginDto);
-    boolean registerUser(UserRegistrationDto userRegistrationDto);
-    boolean editData(UserLoginDto userLoginDto, UserRegistrationDto userChangeDataDto);
+    void logUser(UserLoginDto userLoginDto) throws LoginException, LengthPasswordException;
+    void registerUser(UserRegistrationDto userRegistrationDto) throws EmailExistsException, LengthPasswordException;
+    void editData(UserRegistrationDto userChangeDataDto) throws EmailExistsException, LengthPasswordException;
 }

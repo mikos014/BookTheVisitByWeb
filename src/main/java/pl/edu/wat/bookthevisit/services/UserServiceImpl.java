@@ -1,83 +1,101 @@
 package pl.edu.wat.bookthevisit.services;
 
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.edu.wat.bookthevisit.dtos.UserLoginDto;
+import pl.edu.wat.bookthevisit.exceptions.EmailExistsException;
 import pl.edu.wat.bookthevisit.dtos.UserRegistrationDto;
 import pl.edu.wat.bookthevisit.entities.UserEntity;
+import pl.edu.wat.bookthevisit.exceptions.LengthPasswordException;
 import pl.edu.wat.bookthevisit.repositories.UsersRepository;
 
+import javax.security.auth.login.LoginException;
+import java.util.Arrays;
+import java.util.List;
 
-@Service
-public class UserServiceImpl implements UserService
+
+@Service("userDetailsService")
+public class UserServiceImpl implements UserService, UserDetailsService
 {
     private final UsersRepository usersRepository;
 
+//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Autowired
-    public UserServiceImpl(UsersRepository usersRepository)
-    {
+    public UserServiceImpl(UsersRepository usersRepository) {
         this.usersRepository = usersRepository;
+//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
-    public boolean logUser(UserLoginDto userLoginDto)
-    {
-        return usersRepository.existsByEmailAndPassword(userLoginDto.getEmail(), userLoginDto.getPassword());
+    public void logUser(UserLoginDto userLoginDto) throws LoginException, LengthPasswordException {
+        if (!usersRepository.existsByEmailAndPassword(userLoginDto.getEmail(), userLoginDto.getPassword()))
+            throw new LoginException("Bad e-mail or password");
+
+        if(userLoginDto.getPassword().length() < 4)
+            throw new LengthPasswordException("Password too short");
     }
 
     @Override
-    public boolean registerUser(UserRegistrationDto userRegistrationDto)
-    {
+    public void registerUser(UserRegistrationDto userRegistrationDto) throws EmailExistsException, LengthPasswordException {
 
-        if (!usersRepository.existsByEmail(userRegistrationDto.getEmail()))
-        {
-            UserEntity userEntity = new UserEntity();
+        if(usersRepository.existsByEmail(userRegistrationDto.getEmail()))
+            throw new EmailExistsException("E-mail " + userRegistrationDto.getEmail() + " already in use");
 
-            userEntity.setEmail(userRegistrationDto.getEmail());
-            userEntity.setName(userRegistrationDto.getName());
-            userEntity.setPassword(userRegistrationDto.getPassword());
-            userEntity.setSurname(userRegistrationDto.getSurname());
+        if(userRegistrationDto.getPassword().length() < 4)
+            throw new LengthPasswordException("Password too short");
 
-            usersRepository.save(userEntity);
-            return true;
-        }
-        else
-            return false;
+        UserEntity userEntity = new UserEntity();
+
+        userEntity.setEmail(userRegistrationDto.getEmail());
+        userEntity.setName(userRegistrationDto.getName());
+        userEntity.setPassword(userRegistrationDto.getPassword());
+        userEntity.setSurname(userRegistrationDto.getSurname());
+
+        usersRepository.save(userEntity);
+
     }
 
     @Override
-    public boolean editData(UserLoginDto userLoginDto, UserRegistrationDto userChangeDataDto)
+    public void editData(UserRegistrationDto userChangeDataDto) throws EmailExistsException, LengthPasswordException {
+
+        Object currentUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String currentUserEmail = currentUser.toString();
+        String currentUserPassword = usersRepository.findByEmail(currentUserEmail).getPassword();
+
+
+        if(!usersRepository.existsByEmail(userChangeDataDto.getEmail()))
+            throw new EmailExistsException(userChangeDataDto.getEmail());
+
+        if(userChangeDataDto.getPassword().length() < 4)
+            throw new LengthPasswordException("Password too short");
+
+        String newUserEmail = userChangeDataDto.getEmail() == null ? currentUserEmail : userChangeDataDto.getEmail();
+        String newUserPassword = userChangeDataDto.getPassword() == null ? currentUserPassword : userChangeDataDto.getPassword();
+        usersRepository.saveUpdate(currentUserEmail, newUserEmail, newUserPassword);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+
+        UserDetails user = (UserDetails) usersRepository.findByEmail(s);
+        if(user == null)
+        {
+            throw new UsernameNotFoundException("Invalid username.");
+        }
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), getAuthority());
+    }
+
+    private List<SimpleGrantedAuthority> getAuthority()
     {
-        int i = 0;
-        UserEntity userEntityToCreate = new UserEntity();
-
-        if (userChangeDataDto.getEmail() != null && !usersRepository.existsByEmail(userChangeDataDto.getEmail())
-                && userChangeDataDto.getPassword() != null)
-        {
-            userEntityToCreate = new UserEntity(null, userChangeDataDto.getEmail(), usersRepository.findByEmail(userLoginDto.getEmail()).getName(), userChangeDataDto.getPassword(), usersRepository.findByEmail(userLoginDto.getEmail()).getSurname());
-            i++;
-        }
-        else if (userChangeDataDto.getEmail() != null && !usersRepository.existsByEmail(userChangeDataDto.getEmail()))
-        {
-            userEntityToCreate = new UserEntity(null, userChangeDataDto.getEmail(), usersRepository.findByEmail(userLoginDto.getEmail()).getName(), userLoginDto.getPassword(), usersRepository.findByEmail(userLoginDto.getEmail()).getSurname());
-            i++;
-        }
-        else if (userChangeDataDto.getPassword() != null)
-        {
-            userEntityToCreate = new UserEntity(null, userLoginDto.getEmail(), usersRepository.findByEmail(userLoginDto.getEmail()).getName(), userChangeDataDto.getPassword(), usersRepository.findByEmail(userLoginDto.getEmail()).getSurname());
-            i++;
-        }
-
-
-        if (i > 0)
-        {
-            UserEntity userEntityToDelete = usersRepository.findByEmail(userLoginDto.getEmail());
-            usersRepository.delete(userEntityToDelete);
-            usersRepository.save(userEntityToCreate);
-            return true;
-        }
-        else
-            return false;
+        return Arrays.asList(new SimpleGrantedAuthority("ROLE_MODERATOR"));
     }
 
 }
