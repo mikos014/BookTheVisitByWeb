@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import pl.edu.wat.bookthevisit.config.JwtTokenFilter;
 import pl.edu.wat.bookthevisit.entities.UserEntity;
 import pl.edu.wat.bookthevisit.repositories.UsersRepository;
 
@@ -53,14 +54,15 @@ public class BookTheVisitApplication
         config.setAllowedHeaders(Collections.singletonList("*"));
         source.registerCorsConfiguration("/**", config);
         FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-        bean.setOrder(0/*Ordered.HIGHEST_PRECEDENCE*/);
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
     }
 
     @Bean
-    public FilterRegistrationBean<JwtFilter> filterRegistrationBean() {
-        FilterRegistrationBean<JwtFilter> filterRegistrationBean = new FilterRegistrationBean<>();
-        filterRegistrationBean.setFilter(new JwtFilter());
+    public FilterRegistrationBean<JwtTokenFilter> filterRegistrationBean()
+    {
+        FilterRegistrationBean<JwtTokenFilter> filterRegistrationBean = new FilterRegistrationBean<>();
+        filterRegistrationBean.setFilter(new JwtTokenFilter());
         filterRegistrationBean.setUrlPatterns(Collections.singleton("/api/*"));
         return filterRegistrationBean;
     }

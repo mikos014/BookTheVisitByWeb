@@ -1,23 +1,15 @@
 package pl.edu.wat.bookthevisit.controllers;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
-import pl.edu.wat.bookthevisit.JwtToken;
+import pl.edu.wat.bookthevisit.config.JwtTokenProvider;
 import pl.edu.wat.bookthevisit.dtos.UserLoginDto;
 import pl.edu.wat.bookthevisit.exceptions.LengthPasswordException;
 import pl.edu.wat.bookthevisit.services.UserService;
 
 import javax.security.auth.login.LoginException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
 import java.util.HashMap;
 
 
@@ -26,14 +18,16 @@ import java.util.HashMap;
 public class LoginController
 {
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public LoginController(UserService userService)
+    public LoginController(UserService userService, JwtTokenProvider jwtTokenProvider)
     {
         this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @PostMapping("/api/abc")
+    @GetMapping("/api/abc")
     public ResponseEntity<String> abc()
     {
         return new ResponseEntity<>("index", HttpStatus.OK);
@@ -58,7 +52,7 @@ public class LoginController
         HashMap<String, Object> map = new HashMap<>();
         map.put("email", userLoginDto.getEmail());
         map.put("role", "user");
-        String token = JwtToken.generate(map, "customLogin", userLoginDto.getPassword());
+        String token = jwtTokenProvider.generate(map, "customLogin", userLoginDto.getPassword());
 
 //        String jwt = Jwts.builder().setClaims(map).setIssuer("customLogin").compact();
 //        httpServletResponse.addCookie(new Cookie("Authorization", String.format("Bearer {}", jwt)));

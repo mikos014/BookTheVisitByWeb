@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -22,6 +21,4 @@ public class UserEntity
     private String password;
     private String surname;
 
-//    @ManyToMany(mappedBy = "users")
-//    private Set<RoleEntity> roles;
 }

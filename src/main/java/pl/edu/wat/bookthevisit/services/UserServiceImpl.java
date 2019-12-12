@@ -22,16 +22,16 @@ import java.util.List;
 
 
 @Service
-public class UserServiceImpl implements UserDetailsService, UserService
+public class UserServiceImpl implements UserService, UserDetailsService
 {
     private final UsersRepository usersRepository;
 
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(UsersRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UsersRepository usersRepository) {
         this.usersRepository = usersRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -91,17 +91,16 @@ public class UserServiceImpl implements UserDetailsService, UserService
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
 
         UserDetails user = (UserDetails) usersRepository.findByEmail(s);
-        if(user == null){
-            throw new UsernameNotFoundException("Invalid username or password.");
+        if(user == null)
+        {
+            throw new UsernameNotFoundException("Invalid username.");
         }
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), getAuthority());
     }
 
-    private List<SimpleGrantedAuthority> getAuthority() {
+    private List<SimpleGrantedAuthority> getAuthority()
+    {
         return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
-//    public List getUsers() {
-//        return usersRepository.getUserDetails();
-//    }
 }

@@ -27,7 +27,7 @@ public class FindDoctorController
     @GetMapping("/api/doctors")
     public ResponseEntity<List<DoctorDto>> getDoctors()
     {
-        return new ResponseEntity<>(doctorService.getDoctors(), HttpStatus.OK);
+        return new ResponseEntity<>(doctorService.getDoctors(), HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/api/doctors/{spec}")
@@ -38,7 +38,7 @@ public class FindDoctorController
         if (doctorDtoList == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         else
-            return new ResponseEntity<>(doctorDtoList, HttpStatus.OK);
+            return new ResponseEntity<>(doctorDtoList, HttpStatus.NO_CONTENT);
     }
 
 }
