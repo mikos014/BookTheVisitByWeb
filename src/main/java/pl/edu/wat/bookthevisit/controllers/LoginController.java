@@ -49,10 +49,10 @@ public class LoginController
             return new ResponseEntity<>("Password too short", HttpStatus.CONFLICT);
         }
 
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("email", userLoginDto.getEmail());
-        map.put("role", "user");
-        String token = jwtTokenProvider.generate(map, "customLogin", userLoginDto.getPassword());
+//        HashMap<String, Object> map = new HashMap<>();
+//        map.put("email", userLoginDto.getEmail());
+//        map.put("role", "user");
+        String token = jwtTokenProvider.generate(userLoginDto.getEmail(), userLoginDto.getPassword());
 
 //        String jwt = Jwts.builder().setClaims(map).setIssuer("customLogin").compact();
 //        httpServletResponse.addCookie(new Cookie("Authorization", String.format("Bearer {}", jwt)));

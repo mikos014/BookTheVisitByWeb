@@ -39,7 +39,7 @@ public class RegisterController
             return new ResponseEntity<>("Password too short.", HttpStatus.CONFLICT);
         }
 
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity(HttpStatus.OK);
 
     }
 }

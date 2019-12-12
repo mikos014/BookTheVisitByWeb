@@ -40,6 +40,6 @@ public class EditDataController
             return new ResponseEntity<>("Email exists ! Set unique one.", HttpStatus.FORBIDDEN);
         }
 
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-@Service
+@Service("userDetailsService")
 public class UserServiceImpl implements UserService, UserDetailsService
 {
     private final UsersRepository usersRepository;
@@ -66,15 +66,10 @@ public class UserServiceImpl implements UserService, UserDetailsService
     @Override
     public void editData(UserRegistrationDto userChangeDataDto) throws EmailExistsException, LengthPasswordException {
 
-//        if()
         Object currentUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String currentUserEmail = currentUser.toString();
         String currentUserPassword = usersRepository.findByEmail(currentUserEmail).getPassword();
 
-//        if(currentUser instanceof UserDetails)
-//        {
-//            currentUserEmail = ((UserDetails)currentUser).getUsername();
-//        }
 
         if(!usersRepository.existsByEmail(userChangeDataDto.getEmail()))
             throw new EmailExistsException(userChangeDataDto.getEmail());
@@ -100,7 +95,7 @@ public class UserServiceImpl implements UserService, UserDetailsService
 
     private List<SimpleGrantedAuthority> getAuthority()
     {
-        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+        return Arrays.asList(new SimpleGrantedAuthority("ROLE_MODERATOR"));
     }
 
 }

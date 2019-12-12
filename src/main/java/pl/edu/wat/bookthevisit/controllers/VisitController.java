@@ -28,7 +28,7 @@ public class VisitController
     {
         if (visitService.addVisit(visitDto, doctorDto, userDto))
         {
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
+            return new ResponseEntity(HttpStatus.OK);
         }
 
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -41,7 +41,7 @@ public class VisitController
 
         if (visitDtoList != null)
         {
-            return new ResponseEntity<>(visitDtoList, HttpStatus.OK);
+            return new ResponseEntity<>(visitDtoList, HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -50,6 +50,6 @@ public class VisitController
     public ResponseEntity deleteVisit(@PathVariable ("id") Integer id)
     {
         visitService.deleteVisitById(id);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
