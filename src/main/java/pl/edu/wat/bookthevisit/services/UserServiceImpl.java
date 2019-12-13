@@ -2,8 +2,10 @@ package pl.edu.wat.bookthevisit.services;
 
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,8 +19,7 @@ import pl.edu.wat.bookthevisit.exceptions.LengthPasswordException;
 import pl.edu.wat.bookthevisit.repositories.UsersRepository;
 
 import javax.security.auth.login.LoginException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 
 
 @Service("userDetailsService")
@@ -26,21 +27,20 @@ public class UserServiceImpl implements UserService, UserDetailsService
 {
     private final UsersRepository usersRepository;
 
-//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(UsersRepository usersRepository) {
+    public UserServiceImpl(UsersRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder)
+    {
         this.usersRepository = usersRepository;
-//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
-    public void logUser(UserLoginDto userLoginDto) throws LoginException, LengthPasswordException {
+    public void logUser(UserLoginDto userLoginDto) throws LoginException
+    {
         if (!usersRepository.existsByEmailAndPassword(userLoginDto.getEmail(), userLoginDto.getPassword()))
             throw new LoginException("Bad e-mail or password");
-
-        if(userLoginDto.getPassword().length() < 4)
-            throw new LengthPasswordException("Password too short");
     }
 
     @Override
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService, UserDetailsService
 
         userEntity.setEmail(userRegistrationDto.getEmail());
         userEntity.setName(userRegistrationDto.getName());
-        userEntity.setPassword(userRegistrationDto.getPassword());
+        userEntity.setPassword(bCryptPasswordEncoder.encode(userRegistrationDto.getPassword()));
         userEntity.setSurname(userRegistrationDto.getSurname());
 
         usersRepository.save(userEntity);
@@ -85,17 +85,17 @@ public class UserServiceImpl implements UserService, UserDetailsService
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
 
-        UserDetails user = (UserDetails) usersRepository.findByEmail(s);
+        UserEntity user = usersRepository.findByEmail(s);
         if(user == null)
         {
             throw new UsernameNotFoundException("Invalid username.");
         }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), getAuthority());
+        return new User(user.getEmail(), user.getPassword(), Collections.emptyList());
     }
 
-    private List<SimpleGrantedAuthority> getAuthority()
-    {
-        return Arrays.asList(new SimpleGrantedAuthority("ROLE_MODERATOR"));
-    }
+//    private List<SimpleGrantedAuthority> getAuthority()
+//    {
+//        return Arrays.asList(new SimpleGrantedAuthority("ROLE_MODERATOR"));
+//    }
 
 }
