@@ -1,14 +1,16 @@
 package pl.edu.wat.bookthevisit.services;
 
-import pl.edu.wat.bookthevisit.dtos.DoctorDto;
-import pl.edu.wat.bookthevisit.dtos.UserDto;
 import pl.edu.wat.bookthevisit.dtos.VisitDto;
+import pl.edu.wat.bookthevisit.exceptions.VisitOccupiedException;
 
+import java.util.Date;
 import java.util.List;
 
 public interface VisitService
 {
-    boolean addVisit(VisitDto visitDto, DoctorDto doctorDto, UserDto userDto);
-    List<VisitDto> showAllVisits();
-    void deleteVisitById(Integer id);
+    void addVisitById(Integer id) throws VisitOccupiedException;
+    List<VisitDto> showUnoccupiedVisits();
+    List<VisitDto> showUnoccupiedVisitsLimitByDate(String spec, Date dateFrom, Date dateTo);
+    List<VisitDto> showMyVisits();
+//    void deleteVisitById(Integer id);
 }

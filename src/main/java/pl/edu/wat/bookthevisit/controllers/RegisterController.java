@@ -32,11 +32,11 @@ public class RegisterController
         }
         catch (EmailExistsException e)
         {
-            return new ResponseEntity<>("Email exists ! Set unique one.", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Email exists ! Set unique one.", HttpStatus.CONFLICT);
         }
         catch (LengthPasswordException e)
         {
-            return new ResponseEntity<>("Password too short.", HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Password too short.", HttpStatus.NOT_ACCEPTABLE);
         }
 
         return new ResponseEntity(HttpStatus.OK);

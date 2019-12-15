@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import pl.edu.wat.bookthevisit.dtos.DoctorDto;
 import pl.edu.wat.bookthevisit.dtos.UserDto;
 import pl.edu.wat.bookthevisit.dtos.VisitDto;
+import pl.edu.wat.bookthevisit.exceptions.VisitOccupiedException;
 import pl.edu.wat.bookthevisit.services.VisitService;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -23,21 +25,25 @@ public class VisitController
         this.visitService = visitService;
     }
 
-    @PostMapping("/api/addVisit")
-    public ResponseEntity addVisit(@RequestBody VisitDto visitDto, DoctorDto doctorDto, UserDto userDto)
+    @PostMapping("/api/addVisit/{idVisit}")
+    public ResponseEntity addVisit(@PathVariable ("idVisit") Integer id)
     {
-        if (visitService.addVisit(visitDto, doctorDto, userDto))
+        try
         {
-            return new ResponseEntity(HttpStatus.OK);
+            visitService.addVisitById(id);
+        }
+        catch (VisitOccupiedException e)
+        {
+            return new ResponseEntity(HttpStatus.CONFLICT);
         }
 
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
-    @GetMapping("/api/showVisit")
-    public ResponseEntity<List<VisitDto>> showAllVisits()
+    @GetMapping("/api/showVisits")
+    public ResponseEntity<List<VisitDto>> showUnoccuppiedVisits()
     {
-        List<VisitDto> visitDtoList = visitService.showAllVisits();
+        List<VisitDto> visitDtoList = visitService.showUnoccupiedVisits();
 
         if (visitDtoList != null)
         {
@@ -46,10 +52,37 @@ public class VisitController
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/api/deleteVisit/{id}")
-    public ResponseEntity deleteVisit(@PathVariable ("id") Integer id)
+//    @GetMapping("/api/showVisits/{spec}/{dateFrom}/{dateTo}")
+    @RequestMapping(path = "/api/showVisitsFiltered", method = RequestMethod.POST, consumes = "application/json")
+    public ResponseEntity<List<VisitDto>> showUnoccuppiedVisitsByDate(@PathVariable String spec, @PathVariable Date dateFrom, @PathVariable Date dateTo)
     {
-        visitService.deleteVisitById(id);
-        return new ResponseEntity(HttpStatus.OK);
+        List<VisitDto> visitDtoList = visitService.showUnoccupiedVisitsLimitByDate(spec, dateFrom, dateTo);
+
+        if (visitDtoList != null)
+        {
+            return new ResponseEntity<>(visitDtoList, HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    @GetMapping("/api/showMyVisits")
+    public ResponseEntity<List<VisitDto>> showMyVisits()
+    {
+        List<VisitDto> visitDtoList = visitService.showMyVisits();
+
+        if (visitDtoList != null)
+        {
+            return new ResponseEntity<>(visitDtoList, HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+//    --****  Usuwanie wizyt
+
+//    @DeleteMapping("/api/deleteVisit/{id}")
+//    public ResponseEntity deleteVisit(@PathVariable ("id") Integer id)
+//    {
+//        visitService.deleteVisitById(id);
+//        return new ResponseEntity(HttpStatus.OK);
+//    }
 }

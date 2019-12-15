@@ -12,7 +12,7 @@ import pl.edu.wat.bookthevisit.entities.UserEntity;
 public interface UsersRepository extends CrudRepository<UserEntity, Integer>
 {
     UserEntity findByEmail(String email);
-    boolean existsByEmailAndPassword(String email, String password);
+//    boolean existsByEmailAndPassword(String email, String password);
     boolean existsByEmail(String email);
 
     @Transactional

@@ -14,14 +14,17 @@ public class VisitEntity
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idVisit;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "dd.MM.yyyy")
     private Date date;
+
+    private int hour;
+    private boolean occupied = false;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "idDoctor")
     private DoctorEntity doctor;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "idPacient")
     private UserEntity pacient;
 

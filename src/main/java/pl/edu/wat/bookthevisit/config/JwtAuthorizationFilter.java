@@ -27,22 +27,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     {
 
         String header = servletRequest.getHeader(TOKEN_PREFIX);
-//
-//        System.out.println(header);
-//        if (header == null || !header.startsWith("Bearer ")) {
-//            throw new ServletException("Missing or invalid Authorization header");
-//        } else {
-//            try {
-//                String token = header.substring(7);
-//                System.out.println(token);
-//
-//                Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
-//                System.out.println(claims);
-//                servletRequest.setAttribute("claims", claims);
-//            } catch (final SignatureException e) {
-//                throw new ServletException("Invalid token");
-//            }
-//        }
 
         if (header == null || !header.startsWith(TOKEN_PREFIX))
         {

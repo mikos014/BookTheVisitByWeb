@@ -36,12 +36,12 @@ public class UserServiceImpl implements UserService, UserDetailsService
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    @Override
-    public void logUser(UserLoginDto userLoginDto) throws LoginException
-    {
-        if (!usersRepository.existsByEmailAndPassword(userLoginDto.getEmail(), userLoginDto.getPassword()))
-            throw new LoginException("Bad e-mail or password");
-    }
+//    @Override
+//    public void logUser(UserLoginDto userLoginDto) throws LoginException
+//    {
+//        if (!usersRepository.existsByEmailAndPassword(userLoginDto.getEmail(), userLoginDto.getPassword()))
+//            throw new LoginException("Bad e-mail or password");
+//    }
 
     @Override
     public void registerUser(UserRegistrationDto userRegistrationDto) throws EmailExistsException, LengthPasswordException {
