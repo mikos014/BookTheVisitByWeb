@@ -53,7 +53,7 @@ public class VisitController
     }
 
 //    @GetMapping("/api/showVisits/{spec}/{dateFrom}/{dateTo}")
-    @RequestMapping(path = "/api/showVisitsFiltered", method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(path = "/api/showVisitsFiltered", method = RequestMethod.GET, consumes = "application/json")
     public ResponseEntity<List<VisitDto>> showUnoccuppiedVisitsByDate(@PathVariable String spec, @PathVariable Date dateFrom, @PathVariable Date dateTo)
     {
         List<VisitDto> visitDtoList = visitService.showUnoccupiedVisitsLimitByDate(spec, dateFrom, dateTo);

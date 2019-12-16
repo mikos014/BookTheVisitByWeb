@@ -15,6 +15,7 @@ public class VisitDto
     private Integer id;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date date;
+    private int time;
     private DoctorEntity doctorEntity;
-    private UserEntity userEntity;
+//    private UserEntity userEntity;
 }

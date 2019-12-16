@@ -17,7 +17,7 @@ public class VisitEntity
     @JsonFormat(pattern = "dd.MM.yyyy")
     private Date date;
 
-    private int hour;
+    private int time;
     private boolean occupied = false;
 
     @ManyToOne(optional = false)
