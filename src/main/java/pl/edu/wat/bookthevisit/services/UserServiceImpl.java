@@ -18,7 +18,6 @@ import pl.edu.wat.bookthevisit.entities.UserEntity;
 import pl.edu.wat.bookthevisit.exceptions.LengthPasswordException;
 import pl.edu.wat.bookthevisit.repositories.UsersRepository;
 
-import javax.security.auth.login.LoginException;
 import java.util.Collections;
 
 
@@ -36,17 +35,11 @@ public class UserServiceImpl implements UserService, UserDetailsService
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-//    @Override
-//    public void logUser(UserLoginDto userLoginDto) throws LoginException
-//    {
-//        if (!usersRepository.existsByEmailAndPassword(userLoginDto.getEmail(), userLoginDto.getPassword()))
-//            throw new LoginException("Bad e-mail or password");
-//    }
 
     @Override
     public void registerUser(UserRegistrationDto userRegistrationDto) throws EmailExistsException, LengthPasswordException {
 
-        if(usersRepository.existsByEmail(userRegistrationDto.getEmail()))
+        if(usersRepository.existsAllByEmail(userRegistrationDto.getEmail()))
             throw new EmailExistsException("E-mail " + userRegistrationDto.getEmail() + " already in use");
 
         if(userRegistrationDto.getPassword().length() < 4)
@@ -64,14 +57,14 @@ public class UserServiceImpl implements UserService, UserDetailsService
     }
 
     @Override
-    public void editData(UserRegistrationDto userChangeDataDto) throws EmailExistsException, LengthPasswordException {
+    public void editData(UserLoginDto userChangeDataDto) throws EmailExistsException, LengthPasswordException {
 
         Object currentUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String currentUserEmail = currentUser.toString();
         String currentUserPassword = usersRepository.findByEmail(currentUserEmail).getPassword();
 
 
-        if(!usersRepository.existsByEmail(userChangeDataDto.getEmail()))
+        if(usersRepository.existsAllByEmail(userChangeDataDto.getEmail()))
             throw new EmailExistsException(userChangeDataDto.getEmail());
 
         if(userChangeDataDto.getPassword().length() < 4)
@@ -92,10 +85,4 @@ public class UserServiceImpl implements UserService, UserDetailsService
         }
         return new User(user.getEmail(), user.getPassword(), Collections.emptyList());
     }
-
-//    private List<SimpleGrantedAuthority> getAuthority()
-//    {
-//        return Arrays.asList(new SimpleGrantedAuthority("ROLE_MODERATOR"));
-//    }
-
 }

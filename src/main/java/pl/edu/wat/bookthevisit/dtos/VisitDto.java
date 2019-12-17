@@ -13,9 +13,9 @@ import java.util.Date;
 public class VisitDto
 {
     private Integer id;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "dd.MM.yyyy")
     private Date date;
-    private int time;
+    private String time;
     private DoctorEntity doctorEntity;
 //    private UserEntity userEntity;
 }

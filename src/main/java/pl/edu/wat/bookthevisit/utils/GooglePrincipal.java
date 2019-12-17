@@ -22,7 +22,7 @@ public class GooglePrincipal implements PrincipalExtractor
     @Override
     public Object extractPrincipal(Map<String, Object> map)
     {
-        boolean userExists = usersRepository.existsByEmail((String)map.get("email"));
+        boolean userExists = usersRepository.existsAllByEmail((String)map.get("email"));
 
         if(userExists)
             return usersRepository.findByEmail((String)map.get("email"));

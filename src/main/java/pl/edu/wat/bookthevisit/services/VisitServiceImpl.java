@@ -48,7 +48,7 @@ public class VisitServiceImpl implements VisitService
     {
         List<VisitDto> visitDtoList = new ArrayList<>();
 
-        visitsRepository.findByOccupiedIsFalse()
+        visitsRepository.findByOccupiedIsFalseOrderByDateAscTimeAsc()
                         .forEach(v -> visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor())));
         return visitDtoList;
     }
@@ -61,7 +61,7 @@ public class VisitServiceImpl implements VisitService
         DoctorEntity doctorEntity = new DoctorEntity();
         doctorEntity.setSpec(spec);
 
-        visitsRepository.findByDateBetweenAndAndDoctor(dateFrom, dateTo, doctorEntity)
+        visitsRepository.findByDateBetweenAndDoctorOrderByDateAscTimeAsc(dateFrom, dateTo, doctorEntity)
                 .forEach(v -> visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor())));
         return visitDtoList;
     }
@@ -74,7 +74,7 @@ public class VisitServiceImpl implements VisitService
 
         List<VisitDto> visitDtoList = new ArrayList<>();
 
-        visitsRepository.findByPacient(userEntity)
+        visitsRepository.findByPacientOrderByDateAscTimeAsc(userEntity)
                 .forEach(v -> visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor())));
         return visitDtoList;
     }

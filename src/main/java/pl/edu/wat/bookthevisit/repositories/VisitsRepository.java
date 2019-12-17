@@ -16,11 +16,11 @@ import java.util.List;
 @Component
 public interface VisitsRepository extends CrudRepository<VisitEntity, Integer>
 {
-    boolean existsByDateAndDoctor(Date date, DoctorEntity doctorEntity);
+//    boolean existsByDateAndDoctor(Date date, DoctorEntity doctorEntity);
     boolean existsByIdVisitAndOccupiedIsTrue(Integer id);
-    List<VisitEntity> findByOccupiedIsFalse();
-    List<VisitEntity> findByPacient(UserEntity userEntity);
-    List<VisitEntity> findByDateBetweenAndAndDoctor(Date dateFrom, Date dateTo, DoctorEntity doctorEntity);
+    List<VisitEntity> findByOccupiedIsFalseOrderByDateAscTimeAsc();
+    List<VisitEntity> findByPacientOrderByDateAscTimeAsc(UserEntity userEntity);
+    List<VisitEntity> findByDateBetweenAndDoctorOrderByDateAscTimeAsc(Date dateFrom, Date dateTo, DoctorEntity doctorEntity);
 
     @Transactional
     @Modifying(clearAutomatically = true)

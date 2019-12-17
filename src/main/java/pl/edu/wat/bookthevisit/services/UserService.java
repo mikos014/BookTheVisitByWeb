@@ -11,5 +11,5 @@ public interface UserService
 {
 //    void logUser(UserLoginDto userLoginDto) throws LoginException, LengthPasswordException;
     void registerUser(UserRegistrationDto userRegistrationDto) throws EmailExistsException, LengthPasswordException;
-    void editData(UserRegistrationDto userChangeDataDto) throws EmailExistsException, LengthPasswordException;
+    void editData(UserLoginDto userChangeDataDto) throws EmailExistsException, LengthPasswordException;
 }

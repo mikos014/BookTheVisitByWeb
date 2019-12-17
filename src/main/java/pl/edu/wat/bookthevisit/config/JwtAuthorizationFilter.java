@@ -25,8 +25,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     public void doFilterInternal(HttpServletRequest servletRequest, HttpServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException
     {
-
-        String header = servletRequest.getHeader(TOKEN_PREFIX);
+        String header = servletRequest.getHeader(HEADER_TEXT);
 
         if (header == null || !header.startsWith(TOKEN_PREFIX))
         {
@@ -41,7 +40,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request)
+    {
         String token = request.getHeader(HEADER_TEXT);
         if (token != null) {
             // parse the token.

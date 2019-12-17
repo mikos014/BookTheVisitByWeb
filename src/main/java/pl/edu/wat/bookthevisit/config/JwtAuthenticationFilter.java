@@ -72,8 +72,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 //                        .signWith(SignatureAlgorithm.HS512, SECRETKEY.getBytes())
 //                        .compact();
 
-//        response.addHeader(HEADER_TEXT, TOKEN_PREFIX + token);
         System.out.println(TOKEN_PREFIX + token);
-        response.addCookie(new Cookie(HEADER_TEXT, TOKEN_PREFIX + token));
+//        response.addCookie(new Cookie(COOKIE_TEXT, TOKEN_PREFIX + token));
+        response.addHeader("Access-Control-Expose-Headers", "Authorization");
+        response.addHeader(HEADER_TEXT, TOKEN_PREFIX + token);
     }
 }

@@ -13,7 +13,7 @@ public interface UsersRepository extends CrudRepository<UserEntity, Integer>
 {
     UserEntity findByEmail(String email);
 //    boolean existsByEmailAndPassword(String email, String password);
-    boolean existsByEmail(String email);
+    boolean existsAllByEmail(String email);
 
     @Transactional
     @Modifying(clearAutomatically = true)

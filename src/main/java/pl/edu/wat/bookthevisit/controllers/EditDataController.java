@@ -7,13 +7,14 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import pl.edu.wat.bookthevisit.dtos.UserLoginDto;
 import pl.edu.wat.bookthevisit.exceptions.EmailExistsException;
 import pl.edu.wat.bookthevisit.dtos.UserRegistrationDto;
 import pl.edu.wat.bookthevisit.exceptions.LengthPasswordException;
 import pl.edu.wat.bookthevisit.services.UserService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class EditDataController
 {
     private final UserService userService;
@@ -25,7 +26,7 @@ public class EditDataController
     }
 
     @PostMapping("/api/editData")
-    public ResponseEntity editData(@RequestBody UserRegistrationDto userChangeDataDto)
+    public ResponseEntity editData(@RequestBody UserLoginDto userChangeDataDto)
     {
         try
         {

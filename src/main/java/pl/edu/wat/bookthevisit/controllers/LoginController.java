@@ -9,7 +9,7 @@ import pl.edu.wat.bookthevisit.services.UserService;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class LoginController
 {
     private final UserService userService;
@@ -35,6 +35,12 @@ public class LoginController
 //        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 //        System.out.println(auth.getPrincipal());
 //        return "/index";
+//    }
+
+//    @PostMapping("/logout")
+//    public ResponseEntity logout()
+//    {
+//
 //    }
 
 }
