@@ -15,6 +15,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import pl.edu.wat.bookthevisit.services.UserServiceImpl;
 
+import java.util.Arrays;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter
@@ -51,9 +53,21 @@ public class WebSecurity extends WebSecurityConfigurerAdapter
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
+//    @Bean
+//    CorsConfigurationSource corsConfigurationSource() {
+//        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+//        return source;
+//    }
+
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    CorsConfigurationSource corsConfigurationSource()
+    {
+        CorsConfiguration configuration = new CorsConfiguration();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "UPDATE"));
         source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
         return source;
     }

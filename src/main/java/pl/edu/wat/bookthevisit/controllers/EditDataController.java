@@ -14,7 +14,7 @@ import pl.edu.wat.bookthevisit.exceptions.LengthPasswordException;
 import pl.edu.wat.bookthevisit.services.UserService;
 
 @RestController
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class EditDataController
 {
     private final UserService userService;

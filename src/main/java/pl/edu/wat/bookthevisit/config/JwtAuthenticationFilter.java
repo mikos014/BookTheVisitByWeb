@@ -72,8 +72,20 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 //                        .signWith(SignatureAlgorithm.HS512, SECRETKEY.getBytes())
 //                        .compact();
 
-        System.out.println(TOKEN_PREFIX + token);
 //        response.addCookie(new Cookie(COOKIE_TEXT, TOKEN_PREFIX + token));
+
+//        response.addHeader("Access-Response-Status-Code", "Status");
+//        response.addHeader("Access-Control-Allow-Origin", "http://localhost/4200");
+//        // Request methods you wish to allow
+//        response.addHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
+//        // Request headers you wish to allow
+//        response.addHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+//        // Set to true if you need the website to include cookies in the requests sent
+//        // to the API (e.g. in case you use sessions)
+//        response.addHeader("Access-Control-Allow-Credentials", "true");
+//        response.addHeader("Content-Type", "application/json");
+
+        System.out.println(TOKEN_PREFIX + token);
         response.addHeader("Access-Control-Expose-Headers", "Authorization");
         response.addHeader(HEADER_TEXT, TOKEN_PREFIX + token);
     }

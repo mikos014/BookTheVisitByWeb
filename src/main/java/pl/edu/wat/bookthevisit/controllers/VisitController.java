@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class VisitController
 {
     private final VisitService visitService;
@@ -37,7 +37,20 @@ public class VisitController
             return new ResponseEntity(HttpStatus.CONFLICT);
         }
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+//    @RequestMapping(path = "/api/showVisitsFiltered", method = RequestMethod.GET)
+    @GetMapping("/api/showVisits/{spec}/{dateFrom}/{dateTo}")
+    public ResponseEntity<List<VisitDto>> showUnoccuppiedVisitsByDate(@PathVariable String spec, @PathVariable Date dateFrom, @PathVariable Date dateTo)
+    {
+        List<VisitDto> visitDtoList = visitService.showUnoccupiedVisitsLimitByDate(spec, dateFrom, dateTo);
+
+        if (visitDtoList != null)
+        {
+            return new ResponseEntity<>(visitDtoList, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/api/showVisits")
@@ -47,20 +60,7 @@ public class VisitController
 
         if (visitDtoList != null)
         {
-            return new ResponseEntity<>(visitDtoList, HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-//    @GetMapping("/api/showVisits/{spec}/{dateFrom}/{dateTo}")
-    @RequestMapping(path = "/api/showVisitsFiltered", method = RequestMethod.GET, consumes = "application/json")
-    public ResponseEntity<List<VisitDto>> showUnoccuppiedVisitsByDate(@PathVariable String spec, @PathVariable Date dateFrom, @PathVariable Date dateTo)
-    {
-        List<VisitDto> visitDtoList = visitService.showUnoccupiedVisitsLimitByDate(spec, dateFrom, dateTo);
-
-        if (visitDtoList != null)
-        {
-            return new ResponseEntity<>(visitDtoList, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(visitDtoList, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -72,7 +72,7 @@ public class VisitController
 
         if (visitDtoList != null)
         {
-            return new ResponseEntity<>(visitDtoList, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(visitDtoList, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

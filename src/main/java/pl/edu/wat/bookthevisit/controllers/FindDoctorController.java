@@ -13,7 +13,7 @@ import pl.edu.wat.bookthevisit.services.DoctorService;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class FindDoctorController
 {
     private final DoctorService doctorService;

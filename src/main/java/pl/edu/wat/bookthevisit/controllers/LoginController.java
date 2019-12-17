@@ -9,7 +9,7 @@ import pl.edu.wat.bookthevisit.services.UserService;
 
 
 @RestController
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class LoginController
 {
     private final UserService userService;
