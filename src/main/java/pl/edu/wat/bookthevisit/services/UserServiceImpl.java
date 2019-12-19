@@ -22,7 +22,6 @@ import java.util.Collections;
 public class UserServiceImpl implements UserService, UserDetailsService
 {
     private final UsersRepository usersRepository;
-
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
