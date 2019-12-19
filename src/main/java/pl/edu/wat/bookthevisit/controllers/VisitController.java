@@ -4,17 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.edu.wat.bookthevisit.dtos.DoctorDto;
-import pl.edu.wat.bookthevisit.dtos.UserDto;
+import pl.edu.wat.bookthevisit.dtos.DateFilterDto;
 import pl.edu.wat.bookthevisit.dtos.VisitDto;
 import pl.edu.wat.bookthevisit.exceptions.VisitOccupiedException;
 import pl.edu.wat.bookthevisit.services.VisitService;
 
-import java.util.Date;
 import java.util.List;
 
 @RestController
-//@CrossOrigin(origins = "*")
 public class VisitController
 {
     private final VisitService visitService;
@@ -40,11 +37,18 @@ public class VisitController
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-//    @RequestMapping(path = "/api/showVisitsFiltered", method = RequestMethod.GET)
-    @GetMapping("/api/showVisits/{spec}/{dateFrom}/{dateTo}")
-    public ResponseEntity<List<VisitDto>> showUnoccuppiedVisitsByDate(@PathVariable String spec, @PathVariable Date dateFrom, @PathVariable Date dateTo)
+    @GetMapping("/api/getVisit/{idVisit}")
+    public ResponseEntity<VisitDto> getVisit(@PathVariable ("idVisit") Integer id)
     {
-        List<VisitDto> visitDtoList = visitService.showUnoccupiedVisitsLimitByDate(spec, dateFrom, dateTo);
+
+        return new ResponseEntity<>(visitService.getVisitById(id), HttpStatus.OK);
+    }
+
+//    @RequestMapping(path = "/api/showVisitsFiltered", method = RequestMethod.GET)
+    @PostMapping("/api/getVisitsFiltered")
+    public ResponseEntity<List<VisitDto>> showUnoccuppiedVisitsByFilter(@RequestBody DateFilterDto dateFilterDto)
+    {
+        List<VisitDto> visitDtoList = visitService.showUnoccupiedVisitsLimitByDate(dateFilterDto);
 
         if (visitDtoList != null)
         {
@@ -53,7 +57,7 @@ public class VisitController
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/api/showVisits")
+    @GetMapping("/api/getVisits")
     public ResponseEntity<List<VisitDto>> showUnoccuppiedVisits()
     {
         List<VisitDto> visitDtoList = visitService.showUnoccupiedVisits();
@@ -65,7 +69,7 @@ public class VisitController
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/api/showMyVisits")
+    @GetMapping("/api/getMyVisits")
     public ResponseEntity<List<VisitDto>> showMyVisits()
     {
         List<VisitDto> visitDtoList = visitService.showMyVisits();

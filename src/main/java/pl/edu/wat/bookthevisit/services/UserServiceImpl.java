@@ -1,9 +1,6 @@
 package pl.edu.wat.bookthevisit.services;
 
-import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -67,11 +64,11 @@ public class UserServiceImpl implements UserService, UserDetailsService
         if(usersRepository.existsAllByEmail(userChangeDataDto.getEmail()))
             throw new EmailExistsException(userChangeDataDto.getEmail());
 
-        if(userChangeDataDto.getPassword().length() < 4)
+        if(userChangeDataDto.getPassword() != null && userChangeDataDto.getPassword().length() < 4)
             throw new LengthPasswordException("Password too short");
 
         String newUserEmail = userChangeDataDto.getEmail() == null ? currentUserEmail : userChangeDataDto.getEmail();
-        String newUserPassword = userChangeDataDto.getPassword() == null ? currentUserPassword : userChangeDataDto.getPassword();
+        String newUserPassword = userChangeDataDto.getPassword() == null ? currentUserPassword : bCryptPasswordEncoder.encode(userChangeDataDto.getPassword());
         usersRepository.saveUpdate(currentUserEmail, newUserEmail, newUserPassword);
     }
 

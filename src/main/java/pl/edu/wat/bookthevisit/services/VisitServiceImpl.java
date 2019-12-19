@@ -3,9 +3,11 @@ package pl.edu.wat.bookthevisit.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import pl.edu.wat.bookthevisit.dtos.DateFilterDto;
 import pl.edu.wat.bookthevisit.dtos.VisitDto;
 import pl.edu.wat.bookthevisit.entities.DoctorEntity;
 import pl.edu.wat.bookthevisit.entities.UserEntity;
+import pl.edu.wat.bookthevisit.entities.VisitEntity;
 import pl.edu.wat.bookthevisit.exceptions.VisitOccupiedException;
 import pl.edu.wat.bookthevisit.repositories.UsersRepository;
 import pl.edu.wat.bookthevisit.repositories.VisitsRepository;
@@ -49,20 +51,25 @@ public class VisitServiceImpl implements VisitService
         List<VisitDto> visitDtoList = new ArrayList<>();
 
         visitsRepository.findByOccupiedIsFalseOrderByDateAscTimeAsc()
-                        .forEach(v -> visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor())));
+                        .forEach(v -> visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor().getIdDoctor())));
         return visitDtoList;
     }
 
     @Override
-    public List<VisitDto> showUnoccupiedVisitsLimitByDate(String spec, Date dateFrom, Date dateTo)
+    public VisitDto getVisitById(Integer id)
+    {
+        VisitEntity visitEntity = visitsRepository.findAllByIdVisit(id);
+
+        return new VisitDto(visitEntity.getIdVisit(), visitEntity.getDate(), visitEntity.getTime(), visitEntity.getDoctor().getIdDoctor());
+    }
+
+    @Override
+    public List<VisitDto> showUnoccupiedVisitsLimitByDate(DateFilterDto dateFilterDto)
     {
         List<VisitDto> visitDtoList = new ArrayList<>();
 
-        DoctorEntity doctorEntity = new DoctorEntity();
-        doctorEntity.setSpec(spec);
-
-        visitsRepository.findByDateBetweenAndDoctorOrderByDateAscTimeAsc(dateFrom, dateTo, doctorEntity)
-                .forEach(v -> visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor())));
+        visitsRepository.findByDateBetweenOrderByDateAscTimeAsc(dateFilterDto.getDateFrom(), dateFilterDto.getDateTo())
+                .forEach(v -> visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor().getIdDoctor())));
         return visitDtoList;
     }
 
@@ -75,7 +82,7 @@ public class VisitServiceImpl implements VisitService
         List<VisitDto> visitDtoList = new ArrayList<>();
 
         visitsRepository.findByPacientOrderByDateAscTimeAsc(userEntity)
-                .forEach(v -> visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor())));
+                .forEach(v -> visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor().getIdDoctor())));
         return visitDtoList;
     }
 

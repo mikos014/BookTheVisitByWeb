@@ -7,19 +7,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import pl.edu.wat.bookthevisit.dtos.UserDto;
-import pl.edu.wat.bookthevisit.dtos.UserLoginDto;
 import pl.edu.wat.bookthevisit.entities.UserEntity;
 
 import javax.servlet.*;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
@@ -63,27 +58,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                         .withSubject(((User) authResult.getPrincipal()).getUsername())
                         .withExpiresAt(new Date(currentTimeMillis + EXPIRATION_TIME))
                         .sign(Algorithm.HMAC512(SECRETKEY.getBytes()));
-//                Jwts
-//                        .builder()
-//                        .setSubject(((UserDto) authResult.getPrincipal()).getEmail())
-////                        .claim("role", "user")
-//                        .setIssuedAt(new Date(currentTimeMillis))
-//                        .setExpiration(new Date(currentTimeMillis + EXPIRATION_TIME))   //10 minutes
-//                        .signWith(SignatureAlgorithm.HS512, SECRETKEY.getBytes())
-//                        .compact();
 
-//        response.addCookie(new Cookie(COOKIE_TEXT, TOKEN_PREFIX + token));
-
-//        response.addHeader("Access-Response-Status-Code", "Status");
-//        response.addHeader("Access-Control-Allow-Origin", "http://localhost/4200");
-//        // Request methods you wish to allow
-//        response.addHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
-//        // Request headers you wish to allow
-//        response.addHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
-//        // Set to true if you need the website to include cookies in the requests sent
-//        // to the API (e.g. in case you use sessions)
-//        response.addHeader("Access-Control-Allow-Credentials", "true");
-//        response.addHeader("Content-Type", "application/json");
 
         System.out.println(TOKEN_PREFIX + token);
         response.addHeader("Access-Control-Expose-Headers", "Authorization");

@@ -8,11 +8,10 @@ import java.util.Date;
 
 @Data
 @AllArgsConstructor
-public class VisitDto
+public class DateFilterDto
 {
-    private Integer id;
     @JsonFormat(pattern = "dd.MM.yyyy")
-    private Date date;
-    private String time;
-    private Integer doctor;
+    private Date dateFrom;
+    @JsonFormat(pattern = "dd.MM.yyyy")
+    private Date dateTo;
 }

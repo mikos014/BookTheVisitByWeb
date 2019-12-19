@@ -10,5 +10,6 @@ import java.util.List;
 public interface DoctorsRepository extends CrudRepository<DoctorEntity, Integer>
 {
     List<DoctorEntity> findAll();
+    DoctorEntity findAllByIdDoctor(Integer id);
     List<DoctorEntity> findBySpec(String spec);
 }
