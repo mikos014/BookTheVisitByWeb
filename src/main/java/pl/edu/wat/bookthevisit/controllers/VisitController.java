@@ -9,6 +9,7 @@ import pl.edu.wat.bookthevisit.dtos.VisitDto;
 import pl.edu.wat.bookthevisit.exceptions.VisitOccupiedException;
 import pl.edu.wat.bookthevisit.services.VisitService;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -46,8 +47,7 @@ public class VisitController
 
 //    @RequestMapping(path = "/api/showVisitsFiltered", method = RequestMethod.GET)
     @PostMapping("/api/getVisitsFiltered")
-    public ResponseEntity<List<VisitDto>> showUnoccuppiedVisitsByFilter(@RequestBody DateFilterDto dateFilterDto)
-    {
+    public ResponseEntity<List<VisitDto>> showUnoccuppiedVisitsByFilter(@RequestBody DateFilterDto dateFilterDto) throws ParseException {
         List<VisitDto> visitDtoList = visitService.showUnoccupiedVisitsLimitByDate(dateFilterDto);
 
         if (visitDtoList != null)

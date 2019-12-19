@@ -4,29 +4,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import pl.edu.wat.bookthevisit.dtos.DateFilterDto;
+import pl.edu.wat.bookthevisit.dtos.DoctorDto;
 import pl.edu.wat.bookthevisit.dtos.VisitDto;
 import pl.edu.wat.bookthevisit.entities.DoctorEntity;
 import pl.edu.wat.bookthevisit.entities.UserEntity;
 import pl.edu.wat.bookthevisit.entities.VisitEntity;
 import pl.edu.wat.bookthevisit.exceptions.VisitOccupiedException;
+import pl.edu.wat.bookthevisit.repositories.DoctorsRepository;
 import pl.edu.wat.bookthevisit.repositories.UsersRepository;
 import pl.edu.wat.bookthevisit.repositories.VisitsRepository;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class VisitServiceImpl implements VisitService
 {
     private final VisitsRepository visitsRepository;
     private final UsersRepository usersRepository;
+    private final DoctorsRepository doctorsRepository;
 
     @Autowired
-    public VisitServiceImpl(VisitsRepository visitsRepository, UsersRepository usersRepository)
+    public VisitServiceImpl(VisitsRepository visitsRepository, UsersRepository usersRepository, DoctorsRepository doctorsRepository)
     {
         this.visitsRepository = visitsRepository;
         this.usersRepository = usersRepository;
+        this.doctorsRepository = doctorsRepository;
     }
 
     @Override
@@ -64,12 +68,28 @@ public class VisitServiceImpl implements VisitService
     }
 
     @Override
-    public List<VisitDto> showUnoccupiedVisitsLimitByDate(DateFilterDto dateFilterDto)
-    {
-        List<VisitDto> visitDtoList = new ArrayList<>();
+    public List<VisitDto> showUnoccupiedVisitsLimitByDate(DateFilterDto dateFilterDto) throws ParseException {
+        List<VisitDto> visitDtoList = new LinkedList<>();
+        List<Integer> list;
 
-        visitsRepository.findByDateBetweenOrderByDateAscTimeAsc(dateFilterDto.getDateFrom(), dateFilterDto.getDateTo())
+        Date dateFrom = dateFilterDto.getDateFrom() == null ? convert(new Date()) : convert(dateFilterDto.getDateFrom());
+        Date dateTo = dateFilterDto.getDateTo() == null ? convert(new Date()) : convert(dateFilterDto.getDateTo());
+
+        visitsRepository.findByDateBetweenAndOccupiedIsFalseOrderByDateAscTimeAsc(dateFrom, dateTo)
                 .forEach(v -> visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor().getIdDoctor())));
+
+        if (dateFilterDto.getSpec() != null && visitDtoList.size() != 0) {
+            list = new ArrayList<>();
+            doctorsRepository.findBySpec(dateFilterDto.getSpec())
+                    .forEach(d -> list.add(d.getIdDoctor()));
+
+            for (int i = 0; i < visitDtoList.size(); i++) {
+                int abc = list.indexOf(visitDtoList.get(i).getDoctor());
+                if (abc == -1) {
+                    visitDtoList.remove(visitDtoList.get(i));
+                }
+            }
+        }
         return visitDtoList;
     }
 
@@ -84,6 +104,13 @@ public class VisitServiceImpl implements VisitService
         visitsRepository.findByPacientOrderByDateAscTimeAsc(userEntity)
                 .forEach(v -> visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor().getIdDoctor())));
         return visitDtoList;
+    }
+
+    private Date convert(Date date) throws ParseException
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String d = sdf.format(date);
+        return new SimpleDateFormat("yyyy-MM-dd").parse(d);
     }
 
 //    @Override

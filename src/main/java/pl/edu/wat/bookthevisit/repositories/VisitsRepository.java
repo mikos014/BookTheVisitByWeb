@@ -21,7 +21,7 @@ public interface VisitsRepository extends CrudRepository<VisitEntity, Integer>
     VisitEntity findAllByIdVisit(Integer id);
     List<VisitEntity> findByOccupiedIsFalseOrderByDateAscTimeAsc();
     List<VisitEntity> findByPacientOrderByDateAscTimeAsc(UserEntity userEntity);
-    List<VisitEntity> findByDateBetweenOrderByDateAscTimeAsc(Date dateFrom, Date dateTo);
+    List<VisitEntity> findByDateBetweenAndOccupiedIsFalseOrderByDateAscTimeAsc(Date dateFrom, Date dateTo);
 
     @Transactional
     @Modifying(clearAutomatically = true)

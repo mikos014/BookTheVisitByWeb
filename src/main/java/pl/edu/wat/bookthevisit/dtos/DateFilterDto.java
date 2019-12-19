@@ -14,4 +14,5 @@ public class DateFilterDto
     private Date dateFrom;
     @JsonFormat(pattern = "dd.MM.yyyy")
     private Date dateTo;
+    private String spec;
 }
