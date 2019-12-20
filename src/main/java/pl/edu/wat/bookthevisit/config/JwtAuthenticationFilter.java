@@ -10,6 +10,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import pl.edu.wat.bookthevisit.entities.UserEntity;
+import pl.edu.wat.bookthevisit.repositories.UsersRepository;
+import pl.edu.wat.bookthevisit.services.UserServiceImpl;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -24,10 +26,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 {
 
     private AuthenticationManager authenticationManager;
+    private final UserServiceImpl userServiceImpl;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager)
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, UserServiceImpl userServiceImpl)
     {
         this.authenticationManager = authenticationManager;
+        this.userServiceImpl = userServiceImpl;
     }
 
     @Override
@@ -36,6 +40,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         {
             UserEntity creds = new ObjectMapper()
                     .readValue(request.getInputStream(), UserEntity.class);
+
+            if(creds.getPassword().equals("google"))
+            {
+                userServiceImpl.saveGoogle(creds);
+
+            }
 
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(

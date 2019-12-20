@@ -1,6 +1,7 @@
 package pl.edu.wat.bookthevisit.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -43,12 +44,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter
                 .cors()
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST,"/register")
+                .antMatchers(HttpMethod.POST,"/register", "/loginGoogle")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
-                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(), userServiceImpl))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
@@ -71,4 +72,5 @@ public class WebSecurity extends WebSecurityConfigurerAdapter
         source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
         return source;
     }
+
 }

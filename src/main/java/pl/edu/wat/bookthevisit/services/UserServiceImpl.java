@@ -79,6 +79,17 @@ public class UserServiceImpl implements UserService, UserDetailsService
         {
             throw new UsernameNotFoundException("Invalid username.");
         }
+        System.out.println(user.getEmail() + " " + user.getPassword());
         return new User(user.getEmail(), user.getPassword(), Collections.emptyList());
+    }
+
+    public void saveGoogle(UserEntity userEntity)
+    {
+        if(usersRepository.existsAllByEmail((userEntity.getEmail())))
+            return;
+
+        userEntity.setPassword(bCryptPasswordEncoder.encode(userEntity.getPassword()));
+        System.out.println(userEntity.getEmail() + " " + userEntity.getPassword());
+        usersRepository.save(userEntity);
     }
 }
