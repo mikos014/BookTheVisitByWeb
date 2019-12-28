@@ -70,8 +70,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                         .sign(Algorithm.HMAC512(SECRETKEY.getBytes()));
 
 
-        System.out.println(TOKEN_PREFIX + token);
         response.addHeader("Access-Control-Expose-Headers", "Authorization");
+        response.addHeader("Access-Control-Expose-Headers", "Role");
+        response.addHeader("Role", "roelaas");
         response.addHeader(HEADER_TEXT, TOKEN_PREFIX + token);
     }
 }
