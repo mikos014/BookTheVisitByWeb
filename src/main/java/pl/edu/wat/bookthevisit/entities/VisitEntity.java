@@ -27,5 +27,4 @@ public class VisitEntity
     @ManyToOne
     @JoinColumn(name = "idPacient")
     private UserEntity pacient;
-
 }

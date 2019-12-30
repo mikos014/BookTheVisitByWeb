@@ -22,6 +22,8 @@ public interface VisitsRepository extends CrudRepository<VisitEntity, Integer>
     List<VisitEntity> findByOccupiedIsFalseOrderByDateAscTimeAsc();
     List<VisitEntity> findByPacientOrderByDateAscTimeAsc(UserEntity userEntity);
     List<VisitEntity> findByDateBetweenAndOccupiedIsFalseOrderByDateAscTimeAsc(Date dateFrom, Date dateTo);
+    List<VisitEntity> findAll();
+    boolean existsByDateAndTimeAndDoctor(Date date, String time, DoctorEntity doctorEntity);
 
     @Transactional
     @Modifying(clearAutomatically = true)

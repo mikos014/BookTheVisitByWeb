@@ -2,6 +2,7 @@ package pl.edu.wat.bookthevisit.services;
 
 import pl.edu.wat.bookthevisit.dtos.DateFilterDto;
 import pl.edu.wat.bookthevisit.dtos.VisitDto;
+import pl.edu.wat.bookthevisit.exceptions.VisitExistsException;
 import pl.edu.wat.bookthevisit.exceptions.VisitOccupiedException;
 
 import java.text.ParseException;
@@ -14,5 +15,7 @@ public interface VisitService
     VisitDto getVisitById(Integer id);
     List<VisitDto> showUnoccupiedVisitsLimitByDate(DateFilterDto dateFilterDto) throws ParseException;
     List<VisitDto> showMyVisits();
+    List<VisitDto> showAllVisits();
+    void setNewVisit(VisitDto visitDto) throws VisitExistsException;
 //    void deleteVisitById(Integer id);
 }

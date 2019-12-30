@@ -8,12 +8,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pl.edu.wat.bookthevisit.entities.UserEntity;
 
+import java.util.List;
+
 @Component
 public interface UsersRepository extends CrudRepository<UserEntity, Integer>
 {
     UserEntity findByEmail(String email);
 //    boolean existsByEmailAndPassword(String email, String password);
     boolean existsAllByEmail(String email);
+    List<UserEntity> findAll();
 
     @Transactional
     @Modifying(clearAutomatically = true)

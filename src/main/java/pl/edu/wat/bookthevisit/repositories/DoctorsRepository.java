@@ -12,4 +12,5 @@ public interface DoctorsRepository extends CrudRepository<DoctorEntity, Integer>
     List<DoctorEntity> findAll();
     DoctorEntity findAllByIdDoctor(Integer id);
     List<DoctorEntity> findBySpec(String spec);
+    boolean existsAllByNameAndSpecAndSurname(String name, String spec, String surname);
 }

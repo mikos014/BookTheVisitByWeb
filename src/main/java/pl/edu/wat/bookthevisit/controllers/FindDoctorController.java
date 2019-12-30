@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.wat.bookthevisit.dtos.DoctorDto;
+import pl.edu.wat.bookthevisit.exceptions.DoctorExistsException;
 import pl.edu.wat.bookthevisit.services.DoctorService;
 
 import java.util.List;
@@ -41,6 +42,21 @@ public class FindDoctorController
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         else
             return new ResponseEntity<>(doctorDtoList, HttpStatus.OK);
+    }
+
+    @PostMapping("/api/setNewDoctor")
+    public ResponseEntity addDoctor(@RequestBody DoctorDto doctorDto)
+    {
+        try
+        {
+            doctorService.setNewDoctor(doctorDto);
+        }
+        catch (DoctorExistsException e)
+        {
+            return new ResponseEntity(HttpStatus.CONFLICT);
+        }
+
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
 }

@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.wat.bookthevisit.dtos.DateFilterDto;
 import pl.edu.wat.bookthevisit.dtos.VisitDto;
+import pl.edu.wat.bookthevisit.exceptions.VisitExistsException;
 import pl.edu.wat.bookthevisit.exceptions.VisitOccupiedException;
 import pl.edu.wat.bookthevisit.services.VisitService;
 
@@ -45,7 +46,6 @@ public class VisitController
         return new ResponseEntity<>(visitService.getVisitById(id), HttpStatus.OK);
     }
 
-//    @RequestMapping(path = "/api/showVisitsFiltered", method = RequestMethod.GET)
     @PostMapping("/api/getVisitsFiltered")
     public ResponseEntity<List<VisitDto>> showUnoccuppiedVisitsByFilter(@RequestBody DateFilterDto dateFilterDto) throws ParseException {
         List<VisitDto> visitDtoList = visitService.showUnoccupiedVisitsLimitByDate(dateFilterDto);
@@ -79,6 +79,34 @@ public class VisitController
             return new ResponseEntity<>(visitDtoList, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/api/getAllVisits")
+    public ResponseEntity<List<VisitDto>> showAllVisits()
+    {
+        List<VisitDto> visitDtoList = visitService.showAllVisits();
+
+        if (visitDtoList != null)
+        {
+            System.out.println(visitDtoList.get(0));
+            return new ResponseEntity<>(visitDtoList, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping("/api/setNewVisit")
+    public ResponseEntity addDoctor(@RequestBody VisitDto visitDto)
+    {
+        try
+        {
+            visitService.setNewVisit(visitDto);
+        }
+        catch (VisitExistsException e)
+        {
+            return new ResponseEntity(HttpStatus.CONFLICT);
+        }
+
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
 //    --****  Usuwanie wizyt

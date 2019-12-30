@@ -21,4 +21,7 @@ public class UserEntity
     private String password;
     private String surname;
 
+    @ManyToOne
+    @JoinColumn(name = "idRole")
+    private RoleEntity role;
 }

@@ -5,8 +5,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import pl.edu.wat.bookthevisit.dtos.DateFilterDto;
 import pl.edu.wat.bookthevisit.dtos.VisitDto;
+import pl.edu.wat.bookthevisit.entities.DoctorEntity;
 import pl.edu.wat.bookthevisit.entities.UserEntity;
 import pl.edu.wat.bookthevisit.entities.VisitEntity;
+import pl.edu.wat.bookthevisit.exceptions.VisitExistsException;
 import pl.edu.wat.bookthevisit.exceptions.VisitOccupiedException;
 import pl.edu.wat.bookthevisit.repositories.DoctorsRepository;
 import pl.edu.wat.bookthevisit.repositories.UsersRepository;
@@ -53,7 +55,7 @@ public class VisitServiceImpl implements VisitService
         List<VisitDto> visitDtoList = new ArrayList<>();
 
         visitsRepository.findByOccupiedIsFalseOrderByDateAscTimeAsc()
-                        .forEach(v -> visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor().getIdDoctor())));
+                        .forEach(v -> visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor().getIdDoctor(), null)));
         return visitDtoList;
     }
 
@@ -62,7 +64,7 @@ public class VisitServiceImpl implements VisitService
     {
         VisitEntity visitEntity = visitsRepository.findAllByIdVisit(id);
 
-        return new VisitDto(visitEntity.getIdVisit(), visitEntity.getDate(), visitEntity.getTime(), visitEntity.getDoctor().getIdDoctor());
+        return new VisitDto(visitEntity.getIdVisit(), visitEntity.getDate(), visitEntity.getTime(), visitEntity.getDoctor().getIdDoctor(), null);
     }
 
     @Override
@@ -74,7 +76,7 @@ public class VisitServiceImpl implements VisitService
         Date dateTo = dateFilterDto.getDateTo() == null ? convert(new Date()) : convert(dateFilterDto.getDateTo());
 
         visitsRepository.findByDateBetweenAndOccupiedIsFalseOrderByDateAscTimeAsc(dateFrom, dateTo)
-                .forEach(v -> visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor().getIdDoctor())));
+                .forEach(v -> visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor().getIdDoctor(), null)));
 
         if (dateFilterDto.getSpec() != null && visitDtoList.size() != 0) {
             list = new ArrayList<>();
@@ -100,7 +102,7 @@ public class VisitServiceImpl implements VisitService
         List<VisitDto> visitDtoList = new ArrayList<>();
 
         visitsRepository.findByPacientOrderByDateAscTimeAsc(userEntity)
-                .forEach(v -> visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor().getIdDoctor())));
+                .forEach(v -> visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor().getIdDoctor(), null)));
         return visitDtoList;
     }
 
@@ -111,7 +113,36 @@ public class VisitServiceImpl implements VisitService
         return new SimpleDateFormat("yyyy-MM-dd").parse(d);
     }
 
-//    @Override
+    @Override
+    public List<VisitDto> showAllVisits()
+    {
+        List<VisitDto> visitDtoList = new ArrayList<>();
+
+        visitsRepository.findAll()
+                .forEach(v -> {
+                    Integer idPacient = v.getPacient() != null ? v.getPacient().getIdPacient() : null;
+                    visitDtoList.add(new VisitDto(v.getIdVisit(), v.getDate(), v.getTime(), v.getDoctor().getIdDoctor(), idPacient));
+                });
+        return visitDtoList;
+    }
+
+    @Override
+    public void setNewVisit(VisitDto visitDto) throws VisitExistsException
+    {
+        DoctorEntity doctorEntity = doctorsRepository.findAllByIdDoctor(visitDto.getDoctor());
+
+        if (visitsRepository.existsByDateAndTimeAndDoctor(visitDto.getDate(), visitDto.getTime(), doctorEntity))
+            throw new VisitExistsException("Visit exists!");
+
+        VisitEntity visitEntity = new VisitEntity();
+        visitEntity.setDate(new java.sql.Date(visitDto.getDate().getTime()));
+        visitEntity.setTime(visitDto.getTime());
+        visitEntity.setOccupied(false);
+        visitEntity.setDoctor(doctorEntity);
+
+        visitsRepository.save(visitEntity);
+    }
+    //    @Override
 //    public void deleteVisitById(Integer id)
 //    {
 //        visitsRepository.deleteById(id);

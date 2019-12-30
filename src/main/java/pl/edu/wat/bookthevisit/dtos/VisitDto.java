@@ -15,4 +15,5 @@ public class VisitDto
     private Date date;
     private String time;
     private Integer doctor;
+    private Integer user;
 }

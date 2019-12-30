@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import pl.edu.wat.bookthevisit.entities.UserEntity;
@@ -24,7 +25,6 @@ import static pl.edu.wat.bookthevisit.config.SecurityConstants.*;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter
 {
-
     private AuthenticationManager authenticationManager;
     private final UserServiceImpl userServiceImpl;
 
@@ -69,10 +69,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                         .withExpiresAt(new Date(currentTimeMillis + EXPIRATION_TIME))
                         .sign(Algorithm.HMAC512(SECRETKEY.getBytes()));
 
+        String currentUserRole = userServiceImpl.getRole(((User) authResult.getPrincipal()).getUsername());
 
         response.addHeader("Access-Control-Expose-Headers", "Authorization");
         response.addHeader("Access-Control-Expose-Headers", "Role");
-        response.addHeader("Role", "roelaas");
+        response.addHeader("Role", currentUserRole);
         response.addHeader(HEADER_TEXT, TOKEN_PREFIX + token);
     }
 }

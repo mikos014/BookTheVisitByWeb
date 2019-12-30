@@ -1,13 +1,19 @@
 package pl.edu.wat.bookthevisit;
 
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import pl.edu.wat.bookthevisit.entities.RoleEntity;
+import pl.edu.wat.bookthevisit.entities.UserEntity;
+import pl.edu.wat.bookthevisit.repositories.RolesRepository;
+import pl.edu.wat.bookthevisit.repositories.UsersRepository;
+
+import java.util.stream.Stream;
 
 @SpringBootApplication
 //@EnableResourceServer
-//@EnableOAuth2Sso
 public class BookTheVisitApplication
 {
 
@@ -22,19 +28,23 @@ public class BookTheVisitApplication
         return new BCryptPasswordEncoder();
     }
 
-//    generator użytkowników
-//    @Bean
-//    ApplicationRunner init(VisitsRepository visitsRepository) {
-//        return args -> {
-//            Stream.of(13.30,14.00, 15.30, 16.00).forEach(email -> {
-//                VisitEntity visitEntity = new VisitEntity();
-//                visitEntity.setEmail(email);
-//                visitEntity.setPassword(bCryptPasswordEncoder().encode("1234"));
-//                visitEntity.setName("casc");
-//                visitEntity.setSurname("casaas");
-//                visitsRepository.save(userEntity);
-//            };
-//        }
-//    }
+//    generator ról
+    @Bean
+    ApplicationRunner init(RolesRepository rolesRepository, UsersRepository usersRepository)
+    {
+        return args -> {
+            Stream.of("Admin", "User").forEach(role -> {
+                RoleEntity roleEntity = new RoleEntity();
+                roleEntity.setRole(role);
+                rolesRepository.save(roleEntity);
+            });
+
+            UserEntity userEntity = new UserEntity();
+            userEntity.setEmail("admin");
+            userEntity.setPassword(bCryptPasswordEncoder().encode("admin"));
+            userEntity.setRole(rolesRepository.findAllByIdRole(1));
+            usersRepository.save(userEntity);
+        };
+    }
 
 }

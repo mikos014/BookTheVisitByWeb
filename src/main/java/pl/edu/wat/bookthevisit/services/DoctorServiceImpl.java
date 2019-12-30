@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.edu.wat.bookthevisit.dtos.DoctorDto;
 import pl.edu.wat.bookthevisit.entities.DoctorEntity;
+import pl.edu.wat.bookthevisit.exceptions.DoctorExistsException;
 import pl.edu.wat.bookthevisit.repositories.DoctorsRepository;
 
 import java.util.ArrayList;
@@ -44,5 +45,19 @@ public class DoctorServiceImpl implements DoctorService
         doctorsRepository.findBySpec(doctorDto.getSpec()).forEach(d -> doctorDtoList.add(new DoctorDto(d.getIdDoctor(), d.getName(), d.getSpec(), d.getSurname())));
 
         return doctorDtoList;
+    }
+
+    @Override
+    public void setNewDoctor(DoctorDto doctorDto) throws DoctorExistsException {
+
+        if (doctorsRepository.existsAllByNameAndSpecAndSurname(doctorDto.getName(), doctorDto.getSpec(), doctorDto.getSurname()))
+            throw new DoctorExistsException("Doctor exists !");
+
+        DoctorEntity doctorEntity = new DoctorEntity();
+        doctorEntity.setName(doctorDto.getName());
+        doctorEntity.setSpec(doctorDto.getSpec());
+        doctorEntity.setSurname(doctorDto.getSurname());
+
+        doctorsRepository.save(doctorEntity);
     }
 }
